@@ -1,38 +1,46 @@
 import Observer from "../Observer";
 
-export type ISliceReducer<
+export type ISliceModifier<
 	TData = any,
 	TPayload = TData,
     TEvents = Record<string, any>,
-> = (
+> = (info: {
+    payload: TPayload,
     state: TData,
-    actions: {
-        payload: TPayload,
-        trigger: <K extends keyof TEvents>(
-            eventName: K,
-            detail: TEvents[K],
-        ) => void,
-    },
-) => void;
+    trigger: <K extends keyof TEvents>(
+        eventName: K,
+        detail: TEvents[K],
+    ) => void
+}) => void;
+
+export type ISliceAccessor<
+    TData = any,
+    TResponse = any,
+> = (info: {
+    state: TData,
+}) => TResponse;
 
 export type ISliceSettings<
 	TData = any,
-    TReducers = Record<string, ISliceReducer<TData>>,
+    TModifiers = Record<string, ISliceModifier<TData>>,
+    TAccessors = Record<string, ISliceAccessor<TData>>,
     TEvents = Record<string, any>,
 > = {
     name: string,
 	initialState: TData,
-	reducers: {
-		[K in keyof TReducers]: ISliceReducer<TData, TReducers[K], TEvents>;
+	modifiers: {
+		[K in keyof TModifiers]: ISliceModifier<TData, TModifiers[K], TEvents>;
 	},
+    accessors?: {
+        [K in keyof TAccessors]: ISliceAccessor<TData, TAccessors[K]>;
+    },
     save?: boolean | ((data: TData) => TData),
-    load?: false | ((initialState: TData, data: TData) => void),
+    load?: false | ((initialState: TData, data: TData) => TData),
 };
 
-export type ISliceAction<
-    TData = any,
-    TPayload = TData,
-> = (action: (payload: TPayload) => TData | null) => void;
+export type ISliceActions<TModifiers extends Record<string, any>> = {
+    [K in keyof TModifiers]: (payload: TModifiers[K]) => void;
+};
 
 export type ISliceEvents<
     TData = any,
@@ -50,4 +58,4 @@ export type IObserverHandler<TDetailType = any> = (
 
 export type IObserverTrigger = {
     cancelled: Readonly<boolean>,
-}
+};

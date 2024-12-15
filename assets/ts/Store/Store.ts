@@ -1,5 +1,5 @@
 import type {
-	ISliceReducer,
+	ISliceModifier,
 } from "../types/classes";
 import Slice from "./Slice";
 import Storage from "./Storage";
@@ -43,19 +43,19 @@ export default class Store {
 
 	makeActions(
 		name: string,
-		reducers: Record<string, ISliceReducer>,
+		modifiers: Record<string, ISliceModifier>,
 	) {
 
 		return Object.fromEntries(
-			Object.entries(reducers).map(([property, reducer]) => [
+			Object.entries(modifiers).map(([property, modifier]) => [
 				property,
-				this.makeAction(name, reducer),
+				this.makeAction(name, modifier),
 			])
 		);
 
 	}
 
-	protected makeAction(name: string, reducer: ISliceReducer) {
+	protected makeAction(name: string, modifier: ISliceModifier) {
 
 		const { events, state } = this;
 
@@ -63,8 +63,9 @@ export default class Store {
 
 			const currentState = this.getState(name);
 			const givenState = structuredClone(currentState);
-			const response = reducer(givenState, {
+			const response = modifier({
 				payload,
+				state: givenState,
 				trigger(eventName: string, detail: any) {
 					events.trigger(`${name}/${eventName}`, detail);
 				},
@@ -176,6 +177,18 @@ export default class Store {
 
 		Object.keys(this.slices).forEach((name) => {
 			this.loadSlice(name);
+		});
+
+	}
+
+	run() {
+
+		this.load();
+
+		const { events } = this;
+
+		Object.keys(this.slices).forEach((name) => {
+			events.on(`${name}/updateStore`, () => this.saveSlice(name));
 		});
 
 	}
