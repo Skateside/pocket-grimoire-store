@@ -1,6 +1,9 @@
 import type {
     IObjectDiff,
 } from "../types/utilities";
+import {
+    AnyObject,
+} from "../types/lib";
 
 export const isIterable = <T>(source: unknown): source is T[] => (
     isNonNullObject(source)
@@ -8,8 +11,8 @@ export const isIterable = <T>(source: unknown): source is T[] => (
 )
 
 export const keysMatch = (
-    source: Record<PropertyKey, any>,
-    check: Record<PropertyKey, any>,
+    source: AnyObject,
+    check: AnyObject,
 ) => {
 
     const sourceKeys = Object.keys(source).sort();
@@ -64,19 +67,19 @@ export const looksLike = (source: unknown, check: unknown): boolean => {
 
 export const isNonNullObject = (
     object: unknown,
-): object is Record<PropertyKey, any> => {
+): object is AnyObject => {
     return typeof object === "object" && object !== null;
 }
 
 export const isEmptyObject = (
-    object: Record<PropertyKey, any>,
+    object: AnyObject,
 ): object is {} => {
     return Object.keys(object).length === 0;
 }
 
 export const matches = (
-    source: Record<PropertyKey, any> | null,
-    check: Record<PropertyKey, any> | null,
+    source: AnyObject | null,
+    check: AnyObject | null,
 ) => {
 
     if (!source || !check) {
@@ -88,11 +91,11 @@ export const matches = (
 }
 
 export const difference = (
-    source: Record<PropertyKey, any>,
-    update: Record<PropertyKey, any>,
+    source: AnyObject,
+    update: AnyObject,
 ) => {
 
-    const diff: Record<PropertyKey, IObjectDiff> = Object.create(null);
+    const diff: Record<string, IObjectDiff> = Object.create(null);
 
     Object.keys(source).forEach((key) => {
 
@@ -145,37 +148,39 @@ export const difference = (
 
 }
 
-export const update = <T extends object = Record<PropertyKey, any>>(
+export const update = <T extends AnyObject = AnyObject>(
     source: T,
-    difference: Record<PropertyKey, IObjectDiff>,
-): T => {
+    difference: Record<string, IObjectDiff>,
+): Partial<T> & AnyObject => {
+
+    const updated = structuredClone(source) as Partial<T> & AnyObject;
 
     Object.entries(difference).forEach(([key, diff]) => {
 
         switch (diff.type) {
 
         case "remove":
-            delete source[key];
+            delete updated[key];
             return;
         
         case "children":
 
-            if (!Object.hasOwn(source, key)) {
-                source[key] = {};
+            if (!Object.hasOwn(updated, key)) {
+                (updated as any)[key] = {};
             }
 
-            source[key] = update(source[key], diff.value);
+            (updated as any)[key] = update(updated[key], diff.value);
             return;
         
         case "new":
         case "update":
-            source[key] = diff.value;
+            (updated as any)[key] = diff.value;
             return;
 
         }
 
     });
 
-    return source;
+    return updated;
 
 }

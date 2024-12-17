@@ -1,5 +1,5 @@
 export class PocketGrimoireError extends Error {
-    readonly pg: true;
+    readonly pg!: true;
     constructor(message: string, options?: ErrorOptions) {
         super(message, options);
         this.name = "PocketGrimoireError";
