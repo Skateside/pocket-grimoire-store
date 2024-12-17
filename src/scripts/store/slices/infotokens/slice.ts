@@ -98,7 +98,7 @@ export default new Slice<
     load(initialState, data) {
         return [
             ...initialState,
-            // ...(window as any).PG.infos,
+            ...(window as any).PG.infos,
             ...data,
         ];
     }
@@ -112,7 +112,7 @@ export default new Slice<
 // // slice.actions.add((payload) => { return null; });
 // slice.actions.add("Lorem ipsum **dolor** sit amet");
 // slice.actions.update({ id: "", text: "" });
-// const types = slice.accessors.getByType();
-// const token = slice.accessors.getToken("");
+// const types = slice.references.getByType();
+// const token = slice.references.getToken("");
 export default slice;
 //*/

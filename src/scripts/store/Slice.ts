@@ -6,16 +6,17 @@ import type {
 } from "../types/classes";
 import type {
     AnyFunction,
+    AnyObject,
 } from "../types/lib";
 import Store from "./Store";
 
 export default class Slice<
     TData = any,
-    TModifiers extends Record<string, any> = {
+    TModifiers extends AnyObject = {
         [K: string]: TData,
     },
     TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
-    TEvents extends Record<string, any> = Record<string, any>,
+    TEvents extends AnyObject = AnyObject,
 > {
 
     static defaultData: ISliceSettings = Object.freeze({
@@ -25,7 +26,7 @@ export default class Slice<
         accessors: {},
         save: true,
         load(state, data) {
-            Object.assign(state, data);
+            return Object.assign({}, state, data);
         },
     });
 
@@ -38,7 +39,6 @@ export default class Slice<
     public events!: ISliceEvents<TData, TEvents>;
     public save: ISliceSettings<TData>["save"];
     public load: ISliceSettings<TData>["load"];
-    // protected store: Store;
 
     constructor(data: ISliceSettings<TData, TModifiers, TAccessors, TEvents>) {
 

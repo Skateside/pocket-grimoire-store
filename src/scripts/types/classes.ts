@@ -3,6 +3,16 @@ import type {
     Tail,
 } from "../types/lib";
 import Observer from "../Observer";
+import Storage from "../store/Storage";
+
+// store/Store
+
+export type IStoreSettings = {
+    observer: Observer,
+    storage: Storage,
+};
+
+// store/Slice
 
 export type ISliceModifier<
 	TData = any,
@@ -21,17 +31,6 @@ export type ISliceActions<TModifiers extends Record<string, any>> = {
     [K in keyof TModifiers]: (payload: TModifiers[K]) => void;
 };
 
-// export type ISliceAccessor<
-//     TData = any,
-//     TResponse = any,
-// > = (info: {
-//     state: TData,
-// }, ...parameters: any[]) => TResponse;
-
-// export type ISliceReference<TAccessor extends (...args: any) => any> = (
-//     (...parameters: Tail<Parameters<TAccessor>>) => ReturnType<TAccessor>
-// );
-
 export type ISliceAccessor<
     TData = any,
     TAccessor extends AnyFunction = AnyFunction,
@@ -46,7 +45,6 @@ export type ISliceReferences<TAccessors extends Record<string, AnyFunction>> = {
 export type ISliceSettings<
 	TData = any,
     TModifiers = Record<string, ISliceModifier<TData>>,
-    // TAccessors = Record<string, ISliceReference<ISliceAccessor<TData>>>,
     TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
     TEvents = Record<string, any>,
 > = {
@@ -56,7 +54,6 @@ export type ISliceSettings<
 		[K in keyof TModifiers]: ISliceModifier<TData, TModifiers[K], TEvents>;
 	},
     accessors?: {
-        // [K in keyof TAccessors]: ISliceReference<ISliceAccessor<TData, TAccessors[K]>>;
         [K in keyof TAccessors]: ISliceAccessor<TData, TAccessors[K]>;
     },
     save?: boolean | ((data: TData) => TData),
@@ -68,6 +65,7 @@ export type ISliceEvents<
     TEventMap extends Record<string, any> = Record<string, any>,
 > = Pick<Observer<{ updateStore: TData } & TEventMap>, "on" | "off">;
 
+// Observer
 
 export type IObserverHandler<TDetailType = any> = (
     detail: TDetailType,

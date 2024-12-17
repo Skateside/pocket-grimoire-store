@@ -2,9 +2,11 @@ import type {
     ISliceAccessor,
     ISliceModifier,
     IObserverHandler,
+    IStoreSettings,
 } from "../types/classes";
 import type {
     Tail,
+    AnyObject
 } from "../types/lib";
 import Slice from "./Slice";
 import Storage from "./Storage";
@@ -17,21 +19,20 @@ import {
     isEmptyObject,
     update,
 } from "../utilities/objects";
-// import "../lib/lib.object-groupby"; // TEMP
 
 export default class Store {
 
-    protected state: Record<string, any>;
+    protected state: AnyObject;
     protected slices: Record<string, Slice>;
     protected storage: Storage;
     public events: Observer;
 
-    constructor() {
+    constructor({ observer, storage }: IStoreSettings) {
 
         this.state = Object.create(null);
         this.slices = Object.create(null);
-        this.storage = new Storage("pg");
-        this.events = new Observer();
+        this.events = observer;
+        this.storage = storage;
 
     }
 
@@ -188,19 +189,11 @@ export default class Store {
     }
 
     save() {
-
-        Object.keys(this.slices).forEach((name) => {
-            this.saveSlice(name);
-        });
-
+        Object.keys(this.slices).forEach((name) => this.saveSlice(name));
     }
 
     load() {
-
-        Object.keys(this.slices).forEach((name) => {
-            this.loadSlice(name);
-        });
-
+        Object.keys(this.slices).forEach((name) => this.loadSlice(name));
     }
 
     run() {
@@ -212,6 +205,8 @@ export default class Store {
         Object.keys(this.slices).forEach((name) => {
             events.on(`${name}/updateStore`, () => this.saveSlice(name));
         });
+
+        events.trigger("run", this.state);
 
     }
 
