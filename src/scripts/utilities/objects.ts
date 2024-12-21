@@ -5,11 +5,26 @@ import {
     AnyObject,
 } from "../types/lib";
 
+/**
+ * Checks to see if the given object is iterable. This might mean an array, but
+ * could also mean something like a NodeList.
+ * 
+ * @param source Source to check.
+ * @returns Whether or not the source object is iterable.
+ */
 export const isIterable = <T>(source: unknown): source is T[] => (
     isNonNullObject(source)
     && typeof (source as T[])[Symbol.iterator] === "function"
 )
 
+/**
+ * Checks to see if the keys of the keys of the two given objects match. The
+ * keys don't necessarily need to be in the same order.
+ * 
+ * @param source One object to test.
+ * @param check Another object to test.
+ * @returns Whether or not the keys match.
+ */
 export const keysMatch = (
     source: AnyObject,
     check: AnyObject,
@@ -25,6 +40,19 @@ export const keysMatch = (
 
 }
 
+/**
+ * Checks to see if the two objects "look alike." Because objects are passed by
+ * reference, two objects that contain the same keys and values aren't the same
+ * but they "look alike."
+ * 
+ * Unlike {@link matches}, this function will compare object properties to make
+ * sure that they "look alike" as well as making sure that all keys in one
+ * object appears in both.
+ * 
+ * @param source Source object to check.
+ * @param check Object to compare.
+ * @returns Whether or not the two objects look alike.
+ */
 export const looksLike = (source: unknown, check: unknown): boolean => {
 
     // First check: are they the same or do they pass `Object.is()`?
@@ -65,18 +93,43 @@ export const looksLike = (source: unknown, check: unknown): boolean => {
 
 }
 
+/**
+ * Checks to see if the given object is an object and not `null`. Be aware that
+ * an array would return `true` here.
+ * 
+ * @param object Object to check.
+ * @returns Whether or not the object is non-nul.
+ */
 export const isNonNullObject = (
     object: unknown,
 ): object is AnyObject => {
     return typeof object === "object" && object !== null;
 }
 
+/**
+ * Checks to see if the object is empty - i.e. it has no keys.
+ * 
+ * @param object Object to test.
+ * @returns Whether or not the object is empty.
+ */
 export const isEmptyObject = (
     object: AnyObject,
 ): object is {} => {
     return Object.keys(object).length === 0;
 }
 
+/**
+ * Checks to see if all the keys in `check` also appear in `source` and contain
+ * the same values.
+ * 
+ * This check is faster than {@link looksLike} but is a shallow check and if a
+ * key appears in `check` but not `source` then this function will still return
+ * `true`.
+ * 
+ * @param source Source object to check.
+ * @param check Check against the source.
+ * @returns Whether or not `source` matches `check`.
+ */
 export const matches = (
     source: AnyObject | null,
     check: AnyObject | null,
@@ -90,6 +143,18 @@ export const matches = (
 
 }
 
+/**
+ * Gets an object describing the differences between the two objects. Each
+ * property in the returned object will have a type ("new" means that the
+ * property was added, "update" means that the value was changed, "remove"
+ * means that the property was removed, and "children" means that the value is
+ * an object and at least one of the value's properties has changed) and the
+ * value itself.
+ * 
+ * @param source Source object.
+ * @param update Updated object.
+ * @returns Information about any changes.
+ */
 export const difference = (
     source: AnyObject,
     update: AnyObject,
@@ -148,6 +213,15 @@ export const difference = (
 
 }
 
+/**
+ * Returns a version of `source` that has been updated according to the
+ * information in `difference` - that information can be generated using the
+ * {@link difference} function.
+ * 
+ * @param source Source object to update.
+ * @param difference The changes to make.
+ * @returns A version of `source` with the changes applied.
+ */
 export const update = <T extends AnyObject = AnyObject>(
     source: T,
     difference: Record<string, IObjectDiff>,
