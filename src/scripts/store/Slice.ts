@@ -3,7 +3,7 @@ import type {
     ISliceEvents,
     ISliceReferences,
     ISliceSettings,
-} from "../types/classes";
+} from "./types/slice";
 import type {
     AnyFunction,
     AnyObject,

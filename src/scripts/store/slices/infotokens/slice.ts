@@ -1,5 +1,6 @@
 import type {
     IInfoToken,
+    IInfoData,
     IInfoModifiers,
     IInfoAccessors,
     IInfoEvents,
@@ -12,7 +13,7 @@ import {
     randomId,
 } from "../../../utilities/strings";
 
-const getCustomToken = (state: IInfoToken[], id: IInfoToken["id"]) => {
+const getCustomToken = (state: IInfoData, id: IInfoToken["id"]) => {
 
     const index = state.findIndex((token) => token.id === id);
 
@@ -35,7 +36,7 @@ const getCustomToken = (state: IInfoToken[], id: IInfoToken["id"]) => {
 
 // const slice = new Slice<
 export default new Slice<
-    IInfoToken[],
+    IInfoData,
     IInfoModifiers,
     IInfoAccessors,
     IInfoEvents
@@ -95,7 +96,7 @@ export default new Slice<
     save(data) {
         return data.filter(({ type }) => type === "custom");
     },
-    load(initialState, data) {
+    load(initialState, data = []) {
         return [
             ...initialState,
             ...(window as any).PG.infos,

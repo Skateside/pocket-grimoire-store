@@ -16,6 +16,8 @@ export type IInfoToken = {
     type: "official" | "custom",
 };
 
+export type IInfoData = IInfoToken[];
+
 export type IInfoModifiers = {
     add: IInfoToken["text"],
     update: RequireOnly<IInfoToken, "id" | "text">,

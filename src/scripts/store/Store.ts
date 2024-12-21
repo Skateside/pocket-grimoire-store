@@ -1,16 +1,20 @@
 import type {
-    ISliceAccessor,
-    ISliceModifier,
     IObserverHandler,
-    IStoreSettings,
 } from "../types/classes";
 import type {
     Tail,
     AnyObject
 } from "../types/lib";
+import type {
+    ISliceAccessor,
+    ISliceModifier,
+} from "./types/slice";
+import type {
+    IStoreSettings,
+} from "./types/store";
+import Observer from "../Observer";
 import Slice from "./Slice";
 import Storage from "./Storage";
-import Observer from "../Observer";
 import {
     UnrecognisedSliceError,
 } from "../errors";

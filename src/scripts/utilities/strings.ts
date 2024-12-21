@@ -1,4 +1,7 @@
 import {
+    unique,
+} from "./arrays";
+import {
     random,
 } from "./numbers";
 
@@ -14,5 +17,24 @@ export function randomId(prefix = "") {
     const date = Date.now().toString(36);
 
     return `${prefix}${rand}${date}`;
+
+}
+
+/**
+ * Takes a space-separated collection of words and returns a de-duplicated array
+ * of those words. If the given `text` is blank, an empty array is returned.
+ *
+ * @param text Text whose words should be returned.
+ * @returns Array of unique words.
+ */
+export function wordlist<TList = string>(text: string) {
+
+    const trimmed = text.trim();
+
+    return (
+        trimmed
+        ? unique(trimmed.split(/\s+/))
+        : []
+    ) as TList[];
 
 }

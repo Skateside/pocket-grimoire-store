@@ -1,6 +1,6 @@
 export class PocketGrimoireError extends Error {
     readonly pg!: true;
-    constructor(message: string, options?: ErrorOptions) {
+    constructor(message?: string, options?: ErrorOptions) {
         super(message, options);
         this.name = "PocketGrimoireError";
         Object.defineProperty(this, "pg", {
@@ -11,8 +11,28 @@ export class PocketGrimoireError extends Error {
 }
 
 export class UnrecognisedSliceError extends PocketGrimoireError {
-    constructor(message: string, options?: ErrorOptions) {
+    constructor(message?: string, options?: ErrorOptions) {
         super(message, options);
         this.name = "UnrecognisedSliceError";
     }
+}
+
+// findOrDie()
+export class CannotFindElementError extends PocketGrimoireError {
+
+    constructor(message?: string) {
+        super(message);
+        this.name = "CannotFindElementError";
+    }
+
+}
+
+// findOrDie()
+export class MissingRootError extends PocketGrimoireError {
+
+    constructor(message?: string) {
+        super(message);
+        this.name = "MissingRootError";
+    }
+
 }
