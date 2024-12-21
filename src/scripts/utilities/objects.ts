@@ -144,12 +144,16 @@ export const matches = (
 }
 
 /**
- * Gets an object describing the differences between the two objects. Each
- * property in the returned object will have a type ("new" means that the
- * property was added, "update" means that the value was changed, "remove"
- * means that the property was removed, and "children" means that the value is
- * an object and at least one of the value's properties has changed) and the
- * value itself.
+ * Gets an object describing the differences between the two given objects. Each
+ * property in the returned object will have a type, most will also have the
+ * value.
+ * 
+ * The type may be one of four things:
+ * 
+ * - "new" - this property was added.
+ * - "update" - this property was updated.
+ * - "children" - one of the property value's properties is different.
+ * - "remove" - this property was removed.
  * 
  * @param source Source object.
  * @param update Updated object.
