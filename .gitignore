@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Test files
+# Pocket Grimoire files
 /ideas/
+/public/assets/data/*.js

@@ -99,7 +99,7 @@ export default new Slice<
     load(initialState, data = []) {
         return [
             ...initialState,
-            ...(window as any).PG.infos,
+            ...(window as any).PG.infoTokens,
             ...data,
         ];
     }
