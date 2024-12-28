@@ -1,5 +1,4 @@
 import path from "path";
-// import file from "fs";
 import {
     readdir,
     readFile,
@@ -7,6 +6,13 @@ import {
 } from "fs/promises";
 import { styleText } from "util";
 
+/**
+ * Takes a path name and runs in through {@link path} - adding the directory
+ * name of this file, if necessary.
+ * 
+ * @param {String} pathName Path name to properly parse. 
+ * @returns {String} Properly formatted path name,
+ */
 const getPathName = (pathName) => {
 
     const { dirname } = import.meta;
@@ -22,95 +28,15 @@ const getPathName = (pathName) => {
 
 };
 
-const rawFiles = Object.entries({
-    infoTokens: "info-tokens.json",
-    jinxes: "jinxes.json",
-    nightOrder: "night-order.json",
-    roles: "roles.json",
-    scripts: "scripts.json",
-}).reduce((files, [name, fileName]) => {
-
-    const pathName = getPathName(`../data/raw/${fileName}`);
-
-    files[name] = readFile(pathName, { encoding: "utf8" });
-
-    return files;
-
-}, Object.create(null));
-
-
-
-readdir(getPathName("../data/locales")).then((dirs) => {
-    // console.log(dirs);
-
-    let complete = 0;
-    const { length } = dirs;
-
-    for (const dir of dirs) {
-
-        const localeFiles = Object.entries({
-            infoTokens: "info-tokens.json",
-            jinxes: "jinxes.json",
-            roles: "roles.json",
-            scripts: "scripts.json",
-        }).reduce((files, [name, fileName]) => {
-
-            const pathName = getPathName(`../data/locales/${dir}/${fileName}`);
-
-            files[name] = readFile(pathName, { encoding: "utf8" });
-        
-            return files;
-        
-
-        }, Object.create(null));
-
-        Promise.all([
-            createInfoTokens([
-                rawFiles.infoTokens,
-                localeFiles.infoTokens,
-            ]),
-            createRoles([
-                rawFiles.roles,
-                rawFiles.jinxes,
-                rawFiles.nightOrder,
-                localeFiles.roles,
-                localeFiles.jinxes,
-            ]),
-            createScripts([
-                rawFiles.scripts,
-                localeFiles.scripts,
-            ]),
-        ]).then(([
-            infoTokens,
-            roles,
-            scripts,
-        ]) => {
-
-            writeFile(
-                getPathName(`../public/assets/data/${dir}.js`),
-                writeAllData({
-                    infoTokens,
-                    roles,
-                    scripts,
-                }),
-            ).then(() => {
-
-                complete += 1;
-                console.log(
-                    styleText(
-                        ["green"],
-                        `File written for "${dir}" - ${complete}/${length}`
-                    ),
-                );
-
-            });
-
-        });
-
-    }
-
-});
-
+/**
+ * Writes out the given data as part of a `PG` object. In debug mode, whitespace
+ * is added to make the output more readable.
+ * 
+ * @param {String} property Property to write.
+ * @param {Array|Object} data Data to write.
+ * @param {Boolean} [isDebug=false] Optional debug flag - defaults to `false`.
+ * @returns {String} Written data.
+ */
 const writeData = (property, data, isDebug = false) => {
 
     const space = (
@@ -135,6 +61,14 @@ const writeData = (property, data, isDebug = false) => {
 
 };
 
+/**
+ * Writes the given data. In debug mode, more whitespace is added. See
+ * {@link writeData}.
+ * 
+ * @param {Object} data Data to write. 
+ * @param {Boolean} [isDebug=false] Optional debug flag - defaults to `false`. 
+ * @returns {String} Written data.
+ */
 const writeAllData = (data, isDebug = false) => {
 
     const seperator = (
@@ -155,10 +89,25 @@ const writeAllData = (data, isDebug = false) => {
 
 };
 
+/**
+ * Takes an array of promises and returns a single promise that resolves when
+ * all the given promises have been resolves and their contents parsed as JSON.
+ * This is mainly a helper function to remove some biolerplate for the "create"
+ * functions.
+ * 
+ * @param {Promise[]} promises Promises to resolve. 
+ * @returns {Promise} A promise that resolves with JSON from the other promises.
+ */
 const processFiles = (promises) => Promise.all(promises).then((strings) => [
     ...strings.map((string) => JSON.parse(string)),
 ]);
 
+/**
+ * Creates the localised info tokens.
+ * 
+ * @param {Promise[]} tokenFiles Files needed to process the info tokens.
+ * @returns {Promise} A promise that resolves with localised info tokens.
+ */
 const createInfoTokens = (tokenFiles) => processFiles(tokenFiles).then(([
     rawInfo,
     localeInfo,
@@ -180,6 +129,12 @@ const createInfoTokens = (tokenFiles) => processFiles(tokenFiles).then(([
 
 }));
 
+/**
+ * Creates the localised roles (including jinxes).
+ * 
+ * @param {Promise[]} roleFiles Files needed to process the roles.
+ * @returns {Promise} A promise that resolves with localised roles.
+ */
 const createRoles = (roleFiles) => processFiles(roleFiles).then(([
     rawRoles,
     rawJinxes,
@@ -225,6 +180,12 @@ const createRoles = (roleFiles) => processFiles(roleFiles).then(([
 
 }));
 
+/**
+ * Creates the localised scripts.
+ * 
+ * @param {Promise[]} scriptFiles Files needed to process the scripts.
+ * @returns {Promise} A promise that resolves with localised scripts.
+ */
 const createScripts = (scriptFiles) => processFiles(scriptFiles).then(([
     rawScripts,
     localeScripts,
@@ -251,3 +212,113 @@ const createScripts = (scriptFiles) => processFiles(scriptFiles).then(([
     resolve(rawScripts);
 
 }));
+
+/*
+Process the data.
+*/
+
+// Start by reading all the locales that we have saved in "data/locales/"
+
+readdir(getPathName("../data/locales")).then((dirs) => {
+
+    // When we have them all, get the files in "data/raw/" - they're the base of
+    // the data, the files in "data/locales/" will agument that data to localise
+    // it all.
+
+    const rawFiles = Object.entries({
+        infoTokens: "info-tokens.json",
+        jinxes: "jinxes.json",
+        nightOrder: "night-order.json",
+        roles: "roles.json",
+        scripts: "scripts.json",
+    }).reduce((files, [name, fileName]) => {
+
+        const pathName = getPathName(`../data/raw/${fileName}`);
+
+        files[name] = readFile(pathName, { encoding: "utf8" });
+
+        return files;
+
+    }, Object.create(null));
+
+    // Keep a track of how many locales have been processed - it makes it easy
+    // to see how much progress has been made.
+
+    let complete = 0;
+    const { length } = dirs;
+
+    for (const dir of dirs) {
+
+        // Get the files from the current locale.
+
+        const localeFiles = Object.entries({
+            infoTokens: "info-tokens.json",
+            jinxes: "jinxes.json",
+            roles: "roles.json",
+            scripts: "scripts.json",
+        }).reduce((files, [name, fileName]) => {
+
+            const pathName = getPathName(`../data/locales/${dir}/${fileName}`);
+
+            files[name] = readFile(pathName, { encoding: "utf8" });
+
+            return files;
+
+        }, Object.create(null));
+
+        // Pass the information to our "create" functions, allowing them to be
+        // read asynchronously.
+
+        Promise.all([
+            createInfoTokens([
+                rawFiles.infoTokens,
+                localeFiles.infoTokens,
+            ]),
+            createRoles([
+                rawFiles.roles,
+                rawFiles.jinxes,
+                rawFiles.nightOrder,
+                localeFiles.roles,
+                localeFiles.jinxes,
+            ]),
+            createScripts([
+                rawFiles.scripts,
+                localeFiles.scripts,
+            ]),
+        ]).then(([
+            infoTokens,
+            roles,
+            scripts,
+        ]) => {
+
+            // Write the locale file, telling the console when it's done.
+
+            const isDebug = process.argv.includes("--debug");
+
+            writeFile(
+                getPathName(`../public/assets/data/${dir}.js`),
+                writeAllData({
+                    infoTokens,
+                    roles,
+                    scripts,
+                }, isDebug),
+            ).then(() => {
+
+                complete += 1;
+                console.log(
+                    "File written for "
+                    + styleText(["green"], dir)
+                    + (
+                        isDebug
+                        ? ` - ${complete}/${length}`
+                        : ""
+                    )
+                );
+
+            });
+
+        });
+
+    }
+
+});
