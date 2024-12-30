@@ -1,10 +1,16 @@
 import type {
-    IRole,
+    IRoleData,
+    IRoleModifiers,
+    IRoleAccessors,
+    IRoleEvents,
 } from "./types";
 import Slice from "../../Slice";
 
 export default new Slice<
-    { roles: IRole[], augments: Partial<IRole>[] }
+    IRoleData,
+    IRoleModifiers,
+    IRoleAccessors,
+    IRoleEvents
 >({
     name: "roles",
     initialState: {
@@ -31,7 +37,7 @@ export default new Slice<
         return {
             roles: [
                 ...initialState.roles,
-                // ...(window as any).PG.roles,
+                ...(window as any).PG.roles,
             ],
             augments: [
                 ...data.augments,

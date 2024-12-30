@@ -66,6 +66,10 @@ export type IRoleSpecial = {
     global?: IRolePlayTeam,
 };
 
+export type IRoleData = {
+    roles: IRole[],
+    augments: Partial<IRole>[],
+};
 export type IRoleModifiers = {};
 export type IRoleAccessors = {};
 export type IRoleEvents = {};
