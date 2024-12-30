@@ -16,6 +16,6 @@ export type IStoreSettings = {
 // It would be nice if this could be done automatically, but doing this manually
 // allows TypeScript to work across modules.
 
-export type IStoreLookup = {
+export type IStoreSlices = {
     "info-tokens": Slice<IInfoData, IInfoModifiers, IInfoAccessors, IInfoEvents>,
 };

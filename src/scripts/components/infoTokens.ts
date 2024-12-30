@@ -1,5 +1,5 @@
 import type {
-    IAppLookup,
+    IAppGetSlice,
 } from "../types/app";
 import type {
     IInfoToken,
@@ -15,9 +15,9 @@ import {
 } from "../utilities/markdown";
 import Dialog from "../ui/Dialog";
 
-export default function infoTokens(lookup: IAppLookup) {
+export default function infoTokens(getSlice: IAppGetSlice) {
 
-    const slice = lookup("info-tokens");
+    const slice = getSlice("info-tokens");
     const wrapper = findOrDie("#info-token-wrapper");
 
     // Render the list of info token triggers.

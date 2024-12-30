@@ -1,5 +1,5 @@
 import type {
-    IAppLookup,
+    IAppGetSlice,
 } from "./types/app";
 import Store from "./store/Store";
 import Slice from "./store/Slice";
@@ -7,7 +7,7 @@ import Slice from "./store/Slice";
 export default class App {
 
     protected store: Store;
-    protected components: ((lookup: IAppLookup) => void)[];
+    protected components: ((getSlice: IAppGetSlice) => void)[];
 
     constructor({ store }: { store: Store }) {
         this.store = store;
@@ -19,7 +19,7 @@ export default class App {
         return this;
     }
 
-    addComponent(component: (lookup: IAppLookup) => void) {
+    addComponent(component: (getSlice: IAppGetSlice) => void) {
         this.components.push(component);
         return this;
     }
@@ -33,8 +33,8 @@ export default class App {
 
         store.run();
 
-        const lookup = ((name: string) => store.getSlice(name)) as IAppLookup;
-        components.forEach((component) => component(lookup));
+        const getSlice = ((name: string) => store.getSlice(name)) as IAppGetSlice;
+        components.forEach((component) => component(getSlice));
 
     }
 

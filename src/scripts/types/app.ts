@@ -1,5 +1,5 @@
 import {
-    IStoreLookup,
+    IStoreSlices,
 } from "../store/types/store";
 
-export type IAppLookup = <K extends keyof IStoreLookup>(key: K) => IStoreLookup[K];
+export type IAppGetSlice = <K extends keyof IStoreSlices>(key: K) => IStoreSlices[K];
