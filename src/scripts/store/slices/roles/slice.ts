@@ -109,10 +109,10 @@ const combineJinxes = (
                 jinxes[index].reason = reason;
             } else {
 
-                const jinx = {
+                const jinx: IRoleJinx = {
                     id,
                     reason,
-                } as IRoleJinx;
+                };
 
                 jinxes.push(jinx);
 
