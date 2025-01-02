@@ -13,27 +13,6 @@ import {
     randomId,
 } from "../../../utilities/strings";
 
-const getCustomToken = (state: IInfoData, id: IInfoToken["id"]) => {
-
-    const index = state.findIndex((token) => token.id === id);
-
-    if (index < 0) {
-        return { index };
-    }
-
-    const token = state[index];
-
-    if (token.type === "official") {
-        throw new CannotChangeOfficialIntoTokenError(id);
-    }
-
-    return {
-        index,
-        token,
-    };
-
-};
-
 // const slice = new Slice<
 export default new Slice<
     IInfoData,
@@ -104,6 +83,27 @@ export default new Slice<
         ];
     }
 });
+
+const getCustomToken = (state: IInfoData, id: IInfoToken["id"]) => {
+
+    const index = state.findIndex((token) => token.id === id);
+
+    if (index < 0) {
+        return { index };
+    }
+
+    const token = state[index];
+
+    if (token.type === "official") {
+        throw new CannotChangeOfficialIntoTokenError(id);
+    }
+
+    return {
+        index,
+        token,
+    };
+
+};
 
 /*
 // slice.events.on("add", (token, { cancel, stop }) => {});

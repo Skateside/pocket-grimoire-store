@@ -11,44 +11,6 @@ import {
 } from "./errors";
 import Slice from "../../Slice";
 
-const combineJinxes = (
-    roleJinxes?: IRoleJinx[],
-    augmentJinxes?: IRoleJinx[],
-) => {
-
-    if (!roleJinxes?.length && !augmentJinxes?.length) {
-        return;
-    }
-
-    return (augmentJinxes || []).reduce((jinxes, { id, reason }) => {
-
-        const index = jinxes.findIndex(({ id: jinxId }) => id === jinxId);
-
-        if (!reason && index > -1) {
-            jinxes.splice(index, 1);
-        } else if (reason) {
-
-            if (index > -1) {
-                jinxes[index].reason = reason;
-            } else {
-
-                const jinx = {
-                    id,
-                    reason,
-                } as IRoleJinx;
-
-                jinxes.push(jinx);
-
-            }
-
-        }
-
-        return jinxes;
-
-    }, roleJinxes || []);
-
-};
-
 export default new Slice<
     IRoleData,
     IRoleModifiers,
@@ -125,3 +87,41 @@ export default new Slice<
 
     },
 });
+
+const combineJinxes = (
+    roleJinxes?: IRoleJinx[],
+    augmentJinxes?: IRoleJinx[],
+) => {
+
+    if (!roleJinxes?.length && !augmentJinxes?.length) {
+        return;
+    }
+
+    return (augmentJinxes || []).reduce((jinxes, { id, reason }) => {
+
+        const index = jinxes.findIndex(({ id: jinxId }) => id === jinxId);
+
+        if (!reason && index > -1) {
+            jinxes.splice(index, 1);
+        } else if (reason) {
+
+            if (index > -1) {
+                jinxes[index].reason = reason;
+            } else {
+
+                const jinx = {
+                    id,
+                    reason,
+                } as IRoleJinx;
+
+                jinxes.push(jinx);
+
+            }
+
+        }
+
+        return jinxes;
+
+    }, roleJinxes || []);
+
+};
