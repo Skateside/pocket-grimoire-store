@@ -24,11 +24,15 @@ export type ISliceActions<TModifiers extends Record<string, any>> = {
 export type ISliceAccessor<
     TData = any,
     TAccessor extends AnyFunction = AnyFunction,
+    TReferences = ISliceReferences,
 > = (
-    (info: { state: TData }, ...args: Parameters<TAccessor>) => ReturnType<TAccessor>
+    (info: {
+        state: TData,
+        references: TReferences,
+    }, ...args: Parameters<TAccessor>) => ReturnType<TAccessor>
 );
 
-export type ISliceReferences<TAccessors extends Record<string, AnyFunction>> = {
+export type ISliceReferences<TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>> = {
     [K in keyof TAccessors]: (...args: Tail<Parameters<TAccessors[K]>>) => ReturnType<TAccessors[K]>
 };
 
@@ -44,7 +48,7 @@ export type ISliceSettings<
         [K in keyof TModifiers]: ISliceModifier<TData, TModifiers[K], TEvents>;
     },
     accessors?: {
-        [K in keyof TAccessors]: ISliceAccessor<TData, TAccessors[K]>;
+        [K in keyof TAccessors]: ISliceAccessor<TData, TAccessors[K], Omit<ISliceReferences<TAccessors>, K>>;
     },
     save?: boolean | ((data: TData) => TData),
     load?: false | ((initialState: TData, data: TData) => TData),

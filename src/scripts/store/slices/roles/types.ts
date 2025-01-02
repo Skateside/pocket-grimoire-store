@@ -24,7 +24,7 @@ export type IRoleTeam = IRolePlayTeam | "fabled";
 export type IRoleJinx = {
     id: string,
     reason: string,
-    state: "theoretical" | "potential" | "active",
+    // state: "theoretical" | "potential" | "active",
 };
 // state: "theoretical" = this jinx exists but only the role is in the script,
 //                        the id mentioned here isn't.
@@ -70,6 +70,15 @@ export type IRoleData = {
     roles: IRole[],
     augments: Partial<IRole>[],
 };
-export type IRoleModifiers = {};
-export type IRoleAccessors = {};
+
+export type IRoleModifiers = {
+    reset: void,
+};
+
+export type IRoleAccessors = {
+    getData: (id: string) => IRole,
+    getSpecial: () => IRole[],
+    // getScript: () => IRole[],
+};
+
 export type IRoleEvents = {};

@@ -83,6 +83,11 @@ slice.actions.add({
 
 Accessors allow part of the slice's data to be accessed and returned. They're defined as methods to functions because they might have additional parameters.
 
+The first parameter in an accessor is information. It's an object containing 2 properties:
+
+- `state`: A copy of the current state. Mutating this does not affect the state itself.
+- `references`: Any references that are created as a result of these accessors.
+
 Accessors become **references** - these are functions which allow data to be accessed.
 
 ```ts

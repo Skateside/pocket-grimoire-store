@@ -16,6 +16,7 @@ import Observer from "../Observer";
 import Slice from "./Slice";
 import Storage from "./Storage";
 import {
+    SelfReferenceError,
     UnrecognisedSliceError,
 } from "../errors";
 import {
@@ -87,7 +88,7 @@ export default class Store {
                 : response
             );
             const diff = difference(currentState, responseState);
-            
+
             if (isEmptyObject(diff)) {
                 return;
             }
@@ -108,9 +109,22 @@ export default class Store {
         return Object.fromEntries(
             Object.entries(accessors).map(([property, accessor]) => [
                 property,
-                (...args: Tail<Parameters<ISliceAccessor>>) => (
-                    accessor({ state: this.getState(name) }, ...args)
-                ),
+                (...args: Tail<Parameters<ISliceAccessor>>) => {
+
+                    const references = {
+                        ...this.getSlice(name).references,
+                    };
+
+                    references[property] = () => {
+                        throw new SelfReferenceError(property);
+                    };
+
+                    return accessor({
+                        references,
+                        state: this.getState(name),
+                    }, ...args);
+
+                },
             ])
         );
 
@@ -152,8 +166,7 @@ export default class Store {
             throw new UnrecognisedSliceError(name);
         }
 
-        // TODO: return a copy rather than a reference.
-        return state[name];
+        return structuredClone(state[name]);
 
     }
 
