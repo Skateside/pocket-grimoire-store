@@ -1,6 +1,7 @@
 import type {
     ISliceActions,
     ISliceEvents,
+    // ISliceHelpers,
     ISliceReferences,
     ISliceSettings,
 } from "./types/slice";
@@ -17,6 +18,7 @@ export default class Slice<
     },
     TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
     TEvents extends AnyObject = AnyObject,
+    // THelpers extends AnyObject = AnyObject,
 > {
 
     static defaultData: ISliceSettings = Object.freeze({
@@ -24,6 +26,7 @@ export default class Slice<
         initialState: {},
         modifiers: {},
         accessors: {},
+        helpers: {},
         save: true,
         load(state, data) {
             return Object.assign({}, state, data);
@@ -37,6 +40,7 @@ export default class Slice<
     public actions!: ISliceActions<TModifiers>;
     public references!: ISliceReferences<TAccessors>;
     public events!: ISliceEvents<TData, TEvents>;
+    // public helpers!: ISliceHelpers<THelpers>;
     public save: ISliceSettings<TData>["save"];
     public load: ISliceSettings<TData>["load"];
 

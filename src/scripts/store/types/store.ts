@@ -4,6 +4,12 @@ import type {
     IInfoAccessors,
     IInfoEvents,
 } from "../slices/infotokens/types";
+import type {
+    IRoleData,
+    IRoleModifiers,
+    IRoleAccessors,
+    IRoleEvents,
+} from "../slices/roles/types";
 import Slice from "../Slice";
 import Observer from "../../Observer";
 import Storage from "../Storage";
@@ -18,4 +24,5 @@ export type IStoreSettings = {
 
 export type IStoreSlices = {
     "info-tokens": Slice<IInfoData, IInfoModifiers, IInfoAccessors, IInfoEvents>,
+    "roles": Slice<IRoleData, IRoleModifiers, IRoleAccessors, IRoleEvents>,
 };

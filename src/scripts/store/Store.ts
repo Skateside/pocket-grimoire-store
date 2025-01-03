@@ -3,7 +3,8 @@ import type {
 } from "../types/classes";
 import type {
     Tail,
-    AnyObject
+    AnyObject,
+    AnyFunction
 } from "../types/lib";
 import type {
     ISliceAccessor,
@@ -142,6 +143,12 @@ export default class Store {
                 events.off(`${name}/${eventName}`, handler);
             },
         };
+
+    }
+
+    makeHelpers(name: string, helpers: Record<string, AnyFunction>) {
+
+        // TODO
 
     }
 

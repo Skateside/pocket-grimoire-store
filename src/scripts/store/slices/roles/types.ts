@@ -66,9 +66,21 @@ export type IRoleSpecial = {
     global?: IRolePlayTeam,
 };
 
+export type IRoleMeta = {
+    id: "_meta",
+    name: string,
+    author?: string,
+    firstNight?: string[],
+    otherNight?: string[],
+};
+
+export type IRoleScript = (IRoleMeta | IRole | string)[];
+
 export type IRoleData = {
     roles: IRole[],
     augments: Partial<IRole>[],
+    scripts: Record<string, IRoleScript>,
+    script: IRoleScript,
 };
 
 export type IRoleModifiers = {
@@ -76,9 +88,15 @@ export type IRoleModifiers = {
 };
 
 export type IRoleAccessors = {
-    getData: (id: string) => IRole,
-    getSpecial: () => IRole[],
+    getRole: (id: string) => IRole,
+    getSpecialRoles: () => IRole[],
+    getScripts: () => Record<string, IRoleScript>,
+    getScriptById: (id: string) => IRoleScript,
     // getScript: () => IRole[],
 };
 
 export type IRoleEvents = {};
+
+// export type IRoleHelpers = {
+//     getMeta: (script: IRoleScript) => IRoleMeta | void,
+// };

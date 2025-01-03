@@ -8,6 +8,7 @@ import type {
 } from "./types";
 import {
     UnrecognisedRoleError,
+    UnrecognisedScriptError,
 } from "./errors";
 import Slice from "../../Slice";
 
@@ -21,17 +22,20 @@ export default new Slice<
     initialState: {
         roles: [],
         augments: [],
+        scripts: {},
+        script: [],
         // TODO: include the script here?
     },
     modifiers: {
         reset({ state }) {
             state.augments.length = 0;
+            state.script.length = 0;
             // TODO: reset all jinxes to be "theoretical"?
             return state;
         },
     },
     accessors: {
-        getData({ state }, id: string) {
+        getRole({ state }, id: string) {
 
             const role = state.roles.find((role) => role.id === id);
             const augment = state.augments.find((role) => role.id === id);
@@ -54,14 +58,32 @@ export default new Slice<
             return data;
 
         },
-        getSpecial({ state }) {
+        getSpecialRoles({ state }) {
             return state.roles.filter(({ edition }) => edition === "special");
+        },
+        getScripts({ state }) {
+            return state.scripts;
+        },
+        getScriptById({ state }, id: string) {
+
+            const script = state.scripts[id];
+
+            if (!script) {
+                throw new UnrecognisedScriptError(id);
+            }
+
+            return script;
+
         },
         // getScript({ state, references }) {
         //     references.getSpecial();
         //     return [];
         // },
     },
+    // helpers: {
+    //     getMeta({ state, references, accessors, helpers }, script) {
+    //     }
+    // },
     save(data) {
 
         // Ignore anything in `roles` - those are official roles and we can get
@@ -69,19 +91,29 @@ export default new Slice<
         return {
             roles: [],
             augments: [...data.augments],
+            scripts: {},
+            script: [...data.script],
         };
 
     },
     load(initialState, data) {
 
+        const { PG } = (window as any);
+
         return {
             roles: [
                 ...initialState.roles,
-                ...(window as any).PG.roles,
+                ...PG.roles,
             ],
             augments: [
                 ...initialState.augments,
                 ...data.augments,
+            ],
+            scripts: {
+                ...PG.scripts,
+            },
+            script: [
+                ...data.script,
             ],
         };
 

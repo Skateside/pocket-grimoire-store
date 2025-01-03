@@ -58,3 +58,11 @@ export type ISliceEvents<
     TData = any,
     TEventMap extends Record<string, any> = Record<string, any>,
 > = Pick<Observer<{ updateStore: TData } & TEventMap>, "on" | "off">;
+
+// export type ISliceHelper<
+
+// export type ISliceHelpers<
+//     THelpers extends Record<string, AnyFunction> = Record<string, AnyFunction>,
+// > = {
+//     [K in keyof THelpers]: (info: {}, ...args: Parameters<THelpers[K]>) => ReturnType<THelpers[K]>
+// };
