@@ -9,8 +9,8 @@ import { styleText } from "util";
 /**
  * Takes a path name and runs in through {@link path} - adding the directory
  * name of this file, if necessary.
- * 
- * @param {String} pathName Path name to properly parse. 
+ *
+ * @param {String} pathName Path name to properly parse.
  * @returns {String} Properly formatted path name,
  */
 const getPathName = (pathName) => {
@@ -31,7 +31,7 @@ const getPathName = (pathName) => {
 /**
  * Writes out the given data as part of a `PG` object. In debug mode, whitespace
  * is added to make the output more readable.
- * 
+ *
  * @param {String} property Property to write.
  * @param {Array|Object} data Data to write.
  * @param {Boolean} [isDebug=false] Optional debug flag - defaults to `false`.
@@ -64,9 +64,9 @@ const writeData = (property, data, isDebug = false) => {
 /**
  * Writes the given data. In debug mode, more whitespace is added. See
  * {@link writeData}.
- * 
- * @param {Object} data Data to write. 
- * @param {Boolean} [isDebug=false] Optional debug flag - defaults to `false`. 
+ *
+ * @param {Object} data Data to write.
+ * @param {Boolean} [isDebug=false] Optional debug flag - defaults to `false`.
  * @returns {String} Written data.
  */
 const writeAllData = (data, isDebug = false) => {
@@ -94,8 +94,8 @@ const writeAllData = (data, isDebug = false) => {
  * all the given promises have been resolves and their contents parsed as JSON.
  * This is mainly a helper function to remove some biolerplate for the "create"
  * functions.
- * 
- * @param {Promise[]} promises Promises to resolve. 
+ *
+ * @param {Promise[]} promises Promises to resolve.
  * @returns {Promise} A promise that resolves with JSON from the other promises.
  */
 const processFiles = (promises) => Promise.all(promises).then((strings) => [
@@ -104,7 +104,7 @@ const processFiles = (promises) => Promise.all(promises).then((strings) => [
 
 /**
  * Creates the localised info tokens.
- * 
+ *
  * @param {Promise[]} tokenFiles Files needed to process the info tokens.
  * @returns {Promise} A promise that resolves with localised info tokens.
  */
@@ -131,18 +131,18 @@ const createInfoTokens = (tokenFiles) => processFiles(tokenFiles).then(([
 
 /**
  * Creates the localised roles (including jinxes).
- * 
+ *
  * @param {Promise[]} roleFiles Files needed to process the roles.
  * @returns {Promise} A promise that resolves with localised roles.
  */
 const createRoles = (roleFiles) => processFiles(roleFiles).then(([
     rawRoles,
-    rawJinxes,
-    nightOrder,
+    universalRoles,
     localeRoles,
     localeJinxes,
 ]) => new Promise((resolve, reject) => {
 
+    rawRoles.push(...universalRoles);
     rawRoles.forEach((role) => {
 
         Object.assign(
@@ -150,39 +150,30 @@ const createRoles = (roleFiles) => processFiles(roleFiles).then(([
             localeRoles.find(({ id }) => id === role.id) || {},
         );
 
-        role.firstNight = Math.max(0, nightOrder.firstNight.indexOf(role.id));
-        role.otherNight = Math.max(0, nightOrder.otherNight.indexOf(role.id));
-
-        const jinxData = rawJinxes.find(({ id }) => id === role.id);
-
-        if (!jinxData) {
+        if (!role.jinxes?.length) {
             return;
         }
 
-        const jinxes = [];
+        const jinxes = localeJinxes.filter(({ target }) => target === role.id);
 
-        jinxData.jinx.forEach(({ id, reason }) => {
+        if (!jinxes) {
+            return;
+        }
 
-            const localeJinx = localeJinxes.find((jinx) => (
-                jinx.target === role.id
-                && jinx.trick === id
-            ));
-
-            jinxes.push({ id, reason: localeJinx?.reason || reason });
-
-        });
-
-        role.jinxes = jinxes;
+        role.jinxes = role.jinxes.map(({ id, reason }) => ({
+            id,
+            reason: jinxes.find(({ trick }) => trick === id)?.reason || reason,
+        }));
 
     });
 
-    resolve(rawRoles);
+    resolve(rawRoles.sort((a, b) => a.id.localeCompare(b.id)));
 
 }));
 
 /**
  * Creates the localised scripts.
- * 
+ *
  * @param {Promise[]} scriptFiles Files needed to process the scripts.
  * @returns {Promise} A promise that resolves with localised scripts.
  */
@@ -227,9 +218,8 @@ readdir(getPathName("../data/locales")).then((dirs) => {
 
     const rawFiles = Object.entries({
         infoTokens: "info-tokens.json",
-        jinxes: "jinxes.json",
-        nightOrder: "night-order.json",
         roles: "roles.json",
+        universal: "universal.json",
         scripts: "scripts.json",
     }).reduce((files, [name, fileName]) => {
 
@@ -276,8 +266,7 @@ readdir(getPathName("../data/locales")).then((dirs) => {
             ]),
             createRoles([
                 rawFiles.roles,
-                rawFiles.jinxes,
-                rawFiles.nightOrder,
+                rawFiles.universal,
                 localeFiles.roles,
                 localeFiles.jinxes,
             ]),

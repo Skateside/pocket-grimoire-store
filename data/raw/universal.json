@@ -1,0 +1,13 @@
+[
+    {
+        "id": "universalinfo",
+        "name": "Universal information",
+        "edition": "special",
+        "remindersGlobal": [
+            "Good team",
+            "Evil team"
+        ],
+        "firstNight": 0,
+        "otherNight": 0
+    }
+]
