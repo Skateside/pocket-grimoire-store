@@ -5,12 +5,14 @@ const slice = new Slice<{
     PetData,
     PetModifiers,
     PetAccessors,
-    PetEvents
+    PetEvents,
+    PetHelpers
 }>({
     name: "pets",
     initialState: [],
     modifiers: {},
     accessors: {},
+    helpers: {},
     save(data) {
     },
     load(initialState, data) {
@@ -18,12 +20,13 @@ const slice = new Slice<{
 });
 ```
 
-The `Slice` takes 4 generic variables:
+The `Slice` takes 5 generic variables:
 
-1. Data - The structure of the data.
+1. Data - the structure of the data.
 2. Modifiers - method names versus the payload type.
 3. Accessors - methods versus functions (including parameters) and the return value.
-4. Events - Event names versus the detail.
+4. Events - event names versus the detail.
+5. Helpers - a collection of simple but related functions.
 
 ### Data Variable
 
@@ -87,12 +90,13 @@ The first parameter in an accessor is information. It's an object containing 2 p
 
 - `state`: A copy of the current state. Mutating this does not affect the state itself.
 - `references`: Any references that are created as a result of these accessors.
+- `helpers`: Any helpers that have been defined.
 
 Accessors become **references** - these are functions which allow data to be accessed.
 
 ```ts
 type PetAccessors = {
-    getByName: (name: string) => MyDatum | undefined,
+    getByName: (name: string) => Pet | undefined,
     getDogs: () => PetData,
 };
 
@@ -124,7 +128,7 @@ The `events` property only exposes `on` and `off` methods.
 
 ```ts
 type PetEvents = {
-    add: MyDatum,
+    add: Pet,
 };
 
 const slice = new Slice<
@@ -143,6 +147,29 @@ const slice = new Slice<
 slice.events.on("add", (datum) => {
     // triggers when a pet is added.
 });
+```
+
+### Helpers Variable
+
+Helpers are simple functions that can help perform some basic actions. Unlike other variables, they create a property with the same name.
+
+```ts
+type PetHelpers = {
+    getName: (pet: Pet) => string,
+};
+
+const slice = new Slice<
+    PetHelpers,
+    // ...
+}({
+    getName(pet) {
+        return pet.name;
+    },
+});
+
+const pets = slice.references.getDogs();
+const dogNames = pets.map((pet) => slice.helpers.getName(pet));
+// ["fido"]
 ```
 
 ### Name Property
@@ -236,4 +263,7 @@ The `load` property is optional and will be 1 of 2 things:
 - `false` - the slice's data won't be loaded.
 - function (default) - A function that defines how the data is loaded.
 
+The function has 2 properties:
 
+- `initialData` - The initial state of the slice.
+- `data` - Stored data, which might be `undefined`.

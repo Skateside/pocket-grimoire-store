@@ -1,6 +1,6 @@
 import {
     AnyFunction,
-    Tail,
+    // Tail,
 } from "../../types/lib";
 import Observer from "../../Observer";
 
@@ -25,15 +25,17 @@ export type ISliceAccessor<
     TData = any,
     TAccessor extends AnyFunction = AnyFunction,
     TReferences = ISliceReferences,
+    THelpers extends Record<string, AnyFunction> = {},
 > = (
     (info: {
         state: TData,
         references: TReferences,
+        helpers: THelpers,
     }, ...args: Parameters<TAccessor>) => ReturnType<TAccessor>
 );
 
 export type ISliceReferences<TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>> = {
-    [K in keyof TAccessors]: (...args: Tail<Parameters<TAccessors[K]>>) => ReturnType<TAccessors[K]>
+    [K in keyof TAccessors]: (...args: Parameters<TAccessors[K]>) => ReturnType<TAccessors[K]>
 };
 
 export type ISliceSettings<
@@ -41,6 +43,7 @@ export type ISliceSettings<
     TModifiers = Record<string, ISliceModifier<TData>>,
     TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
     TEvents = Record<string, any>,
+    THelpers extends Record<string, AnyFunction> = {},
 > = {
     name: string,
     initialState: TData,
@@ -50,8 +53,9 @@ export type ISliceSettings<
     accessors?: {
         [K in keyof TAccessors]: ISliceAccessor<TData, TAccessors[K], Omit<ISliceReferences<TAccessors>, K>>;
     },
+    helpers?: ISliceHelpers<THelpers>,
     save?: boolean | ((data: TData) => TData),
-    load?: false | ((initialState: TData, data: TData) => TData),
+    load?: false | ((initialState: TData, data?: TData) => TData),
 };
 
 export type ISliceEvents<
@@ -59,7 +63,11 @@ export type ISliceEvents<
     TEventMap extends Record<string, any> = Record<string, any>,
 > = Pick<Observer<{ updateStore: TData } & TEventMap>, "on" | "off">;
 
-// export type ISliceHelper<
+export type ISliceHelper<TFunction extends AnyFunction = AnyFunction> = TFunction;
+
+export type ISliceHelpers<THelpers extends Record<string, AnyFunction> = {}> = {
+    [K in keyof THelpers]: ISliceHelper<THelpers[K]>;
+};
 
 // export type ISliceHelpers<
 //     THelpers extends Record<string, AnyFunction> = Record<string, AnyFunction>,

@@ -5,6 +5,8 @@ import type {
     IRoleModifiers,
     IRoleAccessors,
     IRoleEvents,
+    IRoleHelpers,
+    IRoleMeta,
 } from "./types";
 import {
     UnrecognisedRoleError,
@@ -16,21 +18,26 @@ export default new Slice<
     IRoleData,
     IRoleModifiers,
     IRoleAccessors,
-    IRoleEvents
+    IRoleEvents,
+    IRoleHelpers
 >({
     name: "roles",
     initialState: {
         roles: [],
-        augments: [],
+        homebrew: [],
         scripts: {},
         script: [],
-        // TODO: include the script here?
     },
     modifiers: {
         reset({ state }) {
-            state.augments.length = 0;
+            state.homebrew.length = 0;
             state.script.length = 0;
             // TODO: reset all jinxes to be "theoretical"?
+            return state;
+        },
+        setScript({ state, payload, trigger }) {
+            state.script = payload;
+            trigger("script-set", payload);
             return state;
         },
     },
@@ -38,7 +45,7 @@ export default new Slice<
         getRole({ state }, id: string) {
 
             const role = state.roles.find((role) => role.id === id);
-            const augment = state.augments.find((role) => role.id === id);
+            const augment = state.homebrew.find((role) => role.id === id);
 
             if (!role && !augment) {
                 throw new UnrecognisedRoleError(id);
@@ -75,22 +82,21 @@ export default new Slice<
             return script;
 
         },
-        // getScript({ state, references }) {
-        //     references.getSpecial();
-        //     return [];
-        // },
     },
-    // helpers: {
-    //     getMeta({ state, references, accessors, helpers }, script) {
-    //     }
-    // },
+    helpers: {
+        getMeta(script) {
+
+            return script.find((role) => (
+                typeof role === "object" && role.id === "_meta"
+            )) as IRoleMeta | void;
+
+        },
+    },
     save(data) {
 
-        // Ignore anything in `roles` - those are official roles and we can get
-        // that data from a local variable rather than `localStorage`.
         return {
             roles: [],
-            augments: [...data.augments],
+            homebrew: [...data.homebrew],
             scripts: {},
             script: [...data.script],
         };
@@ -105,15 +111,15 @@ export default new Slice<
                 ...initialState.roles,
                 ...PG.roles,
             ],
-            augments: [
-                ...initialState.augments,
-                ...data.augments,
+            homebrew: [
+                ...initialState.homebrew,
+                ...(data?.homebrew || []),
             ],
             scripts: {
                 ...PG.scripts,
             },
             script: [
-                ...data.script,
+                ...(data?.script || []),
             ],
         };
 

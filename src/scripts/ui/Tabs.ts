@@ -13,6 +13,10 @@ export type ITabData = {
 
 export default class Tabs {
 
+    static create(holder: HTMLElement) {
+        return new this(holder);
+    }
+
     static getPanelFromTab(tab: HTMLElement) {
 
         const id = tab.getAttribute("aria-controls");

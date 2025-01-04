@@ -3,12 +3,14 @@ import type {
     IInfoModifiers,
     IInfoAccessors,
     IInfoEvents,
+    IInfoHelpers,
 } from "../slices/infotokens/types";
 import type {
     IRoleData,
     IRoleModifiers,
     IRoleAccessors,
     IRoleEvents,
+    IRoleHelpers,
 } from "../slices/roles/types";
 import Slice from "../Slice";
 import Observer from "../../Observer";
@@ -23,6 +25,6 @@ export type IStoreSettings = {
 // allows TypeScript to work across modules.
 
 export type IStoreSlices = {
-    "info-tokens": Slice<IInfoData, IInfoModifiers, IInfoAccessors, IInfoEvents>,
-    "roles": Slice<IRoleData, IRoleModifiers, IRoleAccessors, IRoleEvents>,
+    "info-tokens": Slice<IInfoData, IInfoModifiers, IInfoAccessors, IInfoEvents, IInfoHelpers>,
+    "roles": Slice<IRoleData, IRoleModifiers, IRoleAccessors, IRoleEvents, IRoleHelpers>,
 };

@@ -1,7 +1,7 @@
 import type {
     ISliceActions,
     ISliceEvents,
-    // ISliceHelpers,
+    ISliceHelpers,
     ISliceReferences,
     ISliceSettings,
 } from "./types/slice";
@@ -18,7 +18,7 @@ export default class Slice<
     },
     TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
     TEvents extends AnyObject = AnyObject,
-    // THelpers extends AnyObject = AnyObject,
+    THelpers extends Record<string, AnyFunction> = {},
 > {
 
     static defaultData: ISliceSettings = Object.freeze({
@@ -29,22 +29,22 @@ export default class Slice<
         helpers: {},
         save: true,
         load(state, data) {
-            return Object.assign({}, state, data);
+            return Object.assign({}, state, data || {});
         },
     });
 
     public readonly name: string;
     public initialState: TData;
-    public modifiers: TModifiers;
-    public accessors: TAccessors;
+    protected modifiers: TModifiers;
+    protected accessors: TAccessors;
     public actions!: ISliceActions<TModifiers>;
     public references!: ISliceReferences<TAccessors>;
     public events!: ISliceEvents<TData, TEvents>;
-    // public helpers!: ISliceHelpers<THelpers>;
+    public helpers: ISliceHelpers<THelpers>;
     public save: ISliceSettings<TData>["save"];
     public load: ISliceSettings<TData>["load"];
 
-    constructor(data: ISliceSettings<TData, TModifiers, TAccessors, TEvents>) {
+    constructor(data: ISliceSettings<TData, TModifiers, TAccessors, TEvents, THelpers>) {
 
         const constructor = this.constructor as typeof Slice;
         const config = Object.assign({}, constructor.defaultData, data);
@@ -53,6 +53,7 @@ export default class Slice<
         this.initialState = config.initialState;
         this.modifiers = config.modifiers as TModifiers;
         this.accessors = config.accessors as TAccessors;
+        this.helpers =  config.helpers as THelpers;
         this.save = config.save;
         this.load = config.load;
 

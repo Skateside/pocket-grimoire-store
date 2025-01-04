@@ -33,3 +33,5 @@ export type IInfoEvents = {
     update: IInfoToken,
     remove: IInfoToken["id"],
 };
+
+export type IInfoHelpers = {};

@@ -4,7 +4,6 @@ import type {
 import type {
     Tail,
     AnyObject,
-    AnyFunction
 } from "../types/lib";
 import type {
     ISliceAccessor,
@@ -112,8 +111,9 @@ export default class Store {
                 property,
                 (...args: Tail<Parameters<ISliceAccessor>>) => {
 
+                    const slice = this.getSlice(name);
                     const references = {
-                        ...this.getSlice(name).references,
+                        ...slice.references,
                     };
 
                     references[property] = () => {
@@ -123,6 +123,7 @@ export default class Store {
                     return accessor({
                         references,
                         state: this.getState(name),
+                        helpers: { ...slice.helpers },
                     }, ...args);
 
                 },
@@ -143,12 +144,6 @@ export default class Store {
                 events.off(`${name}/${eventName}`, handler);
             },
         };
-
-    }
-
-    makeHelpers(name: string, helpers: Record<string, AnyFunction>) {
-
-        // TODO
 
     }
 

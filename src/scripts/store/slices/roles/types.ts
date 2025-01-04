@@ -78,13 +78,14 @@ export type IRoleScript = (IRoleMeta | IRole | string)[];
 
 export type IRoleData = {
     roles: IRole[],
-    augments: Partial<IRole>[],
+    homebrew: Partial<IRole>[],
     scripts: Record<string, IRoleScript>,
     script: IRoleScript,
 };
 
 export type IRoleModifiers = {
     reset: void,
+    setScript: IRoleScript,
 };
 
 export type IRoleAccessors = {
@@ -92,11 +93,12 @@ export type IRoleAccessors = {
     getSpecialRoles: () => IRole[],
     getScripts: () => Record<string, IRoleScript>,
     getScriptById: (id: string) => IRoleScript,
-    // getScript: () => IRole[],
 };
 
-export type IRoleEvents = {};
+export type IRoleEvents = {
+    "script-set": IRoleScript,
+};
 
-// export type IRoleHelpers = {
-//     getMeta: (script: IRoleScript) => IRoleMeta | void,
-// };
+export type IRoleHelpers = {
+    getMeta: (script: IRoleScript) => IRoleMeta | void,
+};
