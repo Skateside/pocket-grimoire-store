@@ -91,6 +91,7 @@ export type IRoleModifiers = {
 export type IRoleAccessors = {
     getRole: (id: string) => IRole,
     getSpecialRoles: () => IRole[],
+    getScript: () => IRoleScript,
     getScripts: () => Record<string, IRoleScript>,
     getScriptById: (id: string) => IRoleScript,
 };

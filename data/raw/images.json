@@ -1,0 +1,694 @@
+[
+    {
+        "id": "acrobat",
+        "image": "/assets/icons/acrobat.svg"
+    },
+    {
+        "id": "alchemist",
+        "image": "/assets/icons/alchemist.svg"
+    },
+    {
+        "id": "alhadikhia",
+        "image": "/assets/icons/alhadikhia.svg"
+    },
+    {
+        "id": "alsaahir",
+        "image": "/assets/icons/alsaahir.svg"
+    },
+    {
+        "id": "amnesiac",
+        "image": "/assets/icons/amnesiac.svg"
+    },
+    {
+        "id": "angel",
+        "image": "/assets/icons/angel.svg"
+    },
+    {
+        "id": "apprentice",
+        "image": "/assets/icons/apprentice.svg"
+    },
+    {
+        "id": "artist",
+        "image": "/assets/icons/artist.svg"
+    },
+    {
+        "id": "assassin",
+        "image": "/assets/icons/assassin.svg"
+    },
+    {
+        "id": "atheist",
+        "image": "/assets/icons/atheist.svg"
+    },
+    {
+        "id": "balloonist",
+        "image": "/assets/icons/balloonist.svg"
+    },
+    {
+        "id": "banshee",
+        "image": "/assets/icons/banshee.svg"
+    },
+    {
+        "id": "barber",
+        "image": "/assets/icons/barber.svg"
+    },
+    {
+        "id": "barista",
+        "image": "/assets/icons/barista.svg"
+    },
+    {
+        "id": "baron",
+        "image": "/assets/icons/baron.svg"
+    },
+    {
+        "id": "beggar",
+        "image": "/assets/icons/beggar.svg"
+    },
+    {
+        "id": "bishop",
+        "image": "/assets/icons/bishop.svg"
+    },
+    {
+        "id": "boffin",
+        "image": "/assets/icons/boffin.svg"
+    },
+    {
+        "id": "bonecollector",
+        "image": "/assets/icons/bonecollector.svg"
+    },
+    {
+        "id": "boomdandy",
+        "image": "/assets/icons/boomdandy.svg"
+    },
+    {
+        "id": "bootlegger",
+        "image": "/assets/icons/bootlegger.svg"
+    },
+    {
+        "id": "bountyhunter",
+        "image": "/assets/icons/bountyhunter.svg"
+    },
+    {
+        "id": "buddhist",
+        "image": "/assets/icons/buddhist.svg"
+    },
+    {
+        "id": "bureaucrat",
+        "image": "/assets/icons/bureaucrat.svg"
+    },
+    {
+        "id": "butcher",
+        "image": "/assets/icons/butcher.svg"
+    },
+    {
+        "id": "butler",
+        "image": "/assets/icons/butler.svg"
+    },
+    {
+        "id": "cannibal",
+        "image": "/assets/icons/cannibal.svg"
+    },
+    {
+        "id": "cerenovus",
+        "image": "/assets/icons/cerenovus.svg"
+    },
+    {
+        "id": "chambermaid",
+        "image": "/assets/icons/chambermaid.svg"
+    },
+    {
+        "id": "chef",
+        "image": "/assets/icons/chef.svg"
+    },
+    {
+        "id": "choirboy",
+        "image": "/assets/icons/choirboy.svg"
+    },
+    {
+        "id": "clockmaker",
+        "image": "/assets/icons/clockmaker.svg"
+    },
+    {
+        "id": "courtier",
+        "image": "/assets/icons/courtier.svg"
+    },
+    {
+        "id": "cultleader",
+        "image": "/assets/icons/cultleader.svg"
+    },
+    {
+        "id": "damsel",
+        "image": "/assets/icons/damsel.svg"
+    },
+    {
+        "id": "dawn",
+        "image": "/assets/icons/dawn.svg"
+    },
+    {
+        "id": "demoninfo",
+        "image": "/assets/icons/demoninfo.svg"
+    },
+    {
+        "id": "deviant",
+        "image": "/assets/icons/deviant.svg"
+    },
+    {
+        "id": "devilsadvocate",
+        "image": "/assets/icons/devilsadvocate.svg"
+    },
+    {
+        "id": "djinn",
+        "image": "/assets/icons/djinn.svg"
+    },
+    {
+        "id": "doomsayer",
+        "image": "/assets/icons/doomsayer.svg"
+    },
+    {
+        "id": "dreamer",
+        "image": "/assets/icons/dreamer.svg"
+    },
+    {
+        "id": "drunk",
+        "image": "/assets/icons/drunk.svg"
+    },
+    {
+        "id": "duchess",
+        "image": "/assets/icons/duchess.svg"
+    },
+    {
+        "id": "dusk",
+        "image": "/assets/icons/dusk.svg"
+    },
+    {
+        "id": "empath",
+        "image": "/assets/icons/empath.svg"
+    },
+    {
+        "id": "engineer",
+        "image": "/assets/icons/engineer.svg"
+    },
+    {
+        "id": "eviltwin",
+        "image": "/assets/icons/eviltwin.svg"
+    },
+    {
+        "id": "exorcist",
+        "image": "/assets/icons/exorcist.svg"
+    },
+    {
+        "id": "fanggu",
+        "image": "/assets/icons/fanggu.svg"
+    },
+    {
+        "id": "farmer",
+        "image": "/assets/icons/farmer.svg"
+    },
+    {
+        "id": "fearmonger",
+        "image": "/assets/icons/fearmonger.svg"
+    },
+    {
+        "id": "ferryman",
+        "image": "/assets/icons/ferryman.svg"
+    },
+    {
+        "id": "fibbin",
+        "image": "/assets/icons/fibbin.svg"
+    },
+    {
+        "id": "fiddler",
+        "image": "/assets/icons/fiddler.svg"
+    },
+    {
+        "id": "fisherman",
+        "image": "/assets/icons/fisherman.svg"
+    },
+    {
+        "id": "flowergirl",
+        "image": "/assets/icons/flowergirl.svg"
+    },
+    {
+        "id": "fool",
+        "image": "/assets/icons/fool.svg"
+    },
+    {
+        "id": "fortuneteller",
+        "image": "/assets/icons/fortuneteller.svg"
+    },
+    {
+        "id": "gambler",
+        "image": "/assets/icons/gambler.svg"
+    },
+    {
+        "id": "gangster",
+        "image": "/assets/icons/gangster.svg"
+    },
+    {
+        "id": "gardener",
+        "image": "/assets/icons/gardener.svg"
+    },
+    {
+        "id": "general",
+        "image": "/assets/icons/general.svg"
+    },
+    {
+        "id": "gnome",
+        "image": "/assets/icons/gnome.svg"
+    },
+    {
+        "id": "goblin",
+        "image": "/assets/icons/goblin.svg"
+    },
+    {
+        "id": "godfather",
+        "image": "/assets/icons/godfather.svg"
+    },
+    {
+        "id": "golem",
+        "image": "/assets/icons/golem.svg"
+    },
+    {
+        "id": "goon",
+        "image": "/assets/icons/goon.svg"
+    },
+    {
+        "id": "gossip",
+        "image": "/assets/icons/gossip.svg"
+    },
+    {
+        "id": "grandmother",
+        "image": "/assets/icons/grandmother.svg"
+    },
+    {
+        "id": "gunslinger",
+        "image": "/assets/icons/gunslinger.svg"
+    },
+    {
+        "id": "harlot",
+        "image": "/assets/icons/harlot.svg"
+    },
+    {
+        "id": "harpy",
+        "image": "/assets/icons/harpy.svg"
+    },
+    {
+        "id": "hatter",
+        "image": "/assets/icons/hatter.svg"
+    },
+    {
+        "id": "hellslibrarian",
+        "image": "/assets/icons/hellslibrarian.svg"
+    },
+    {
+        "id": "heretic",
+        "image": "/assets/icons/heretic.svg"
+    },
+    {
+        "id": "highpriestess",
+        "image": "/assets/icons/highpriestess.svg"
+    },
+    {
+        "id": "huntsman",
+        "image": "/assets/icons/huntsman.svg"
+    },
+    {
+        "id": "imp",
+        "image": "/assets/icons/imp.svg"
+    },
+    {
+        "id": "innkeeper",
+        "image": "/assets/icons/innkeeper.svg"
+    },
+    {
+        "id": "investigator",
+        "image": "/assets/icons/investigator.svg"
+    },
+    {
+        "id": "judge",
+        "image": "/assets/icons/judge.svg"
+    },
+    {
+        "id": "juggler",
+        "image": "/assets/icons/juggler.svg"
+    },
+    {
+        "id": "kazali",
+        "image": "/assets/icons/kazali.svg"
+    },
+    {
+        "id": "king",
+        "image": "/assets/icons/king.svg"
+    },
+    {
+        "id": "klutz",
+        "image": "/assets/icons/klutz.svg"
+    },
+    {
+        "id": "knight",
+        "image": "/assets/icons/knight.svg"
+    },
+    {
+        "id": "legion",
+        "image": "/assets/icons/legion.svg"
+    },
+    {
+        "id": "leviathan",
+        "image": "/assets/icons/leviathan.svg"
+    },
+    {
+        "id": "librarian",
+        "image": "/assets/icons/librarian.svg"
+    },
+    {
+        "id": "lilmonsta",
+        "image": "/assets/icons/lilmonsta.svg"
+    },
+    {
+        "id": "lleech",
+        "image": "/assets/icons/lleech.svg"
+    },
+    {
+        "id": "lordoftyphon",
+        "image": "/assets/icons/lordoftyphon.svg"
+    },
+    {
+        "id": "lunatic",
+        "image": "/assets/icons/lunatic.svg"
+    },
+    {
+        "id": "lycanthrope",
+        "image": "/assets/icons/lycanthrope.svg"
+    },
+    {
+        "id": "magician",
+        "image": "/assets/icons/magician.svg"
+    },
+    {
+        "id": "marionette",
+        "image": "/assets/icons/marionette.svg"
+    },
+    {
+        "id": "mastermind",
+        "image": "/assets/icons/mastermind.svg"
+    },
+    {
+        "id": "mathematician",
+        "image": "/assets/icons/mathematician.svg"
+    },
+    {
+        "id": "matron",
+        "image": "/assets/icons/matron.svg"
+    },
+    {
+        "id": "mayor",
+        "image": "/assets/icons/mayor.svg"
+    },
+    {
+        "id": "mezepheles",
+        "image": "/assets/icons/mezepheles.svg"
+    },
+    {
+        "id": "minioninfo",
+        "image": "/assets/icons/minioninfo.svg"
+    },
+    {
+        "id": "minstrel",
+        "image": "/assets/icons/minstrel.svg"
+    },
+    {
+        "id": "monk",
+        "image": "/assets/icons/monk.svg"
+    },
+    {
+        "id": "moonchild",
+        "image": "/assets/icons/moonchild.svg"
+    },
+    {
+        "id": "mutant",
+        "image": "/assets/icons/mutant.svg"
+    },
+    {
+        "id": "nightwatchman",
+        "image": "/assets/icons/nightwatchman.svg"
+    },
+    {
+        "id": "noble",
+        "image": "/assets/icons/noble.svg"
+    },
+    {
+        "id": "nodashii",
+        "image": "/assets/icons/nodashii.svg"
+    },
+    {
+        "id": "ogre",
+        "image": "/assets/icons/ogre.svg"
+    },
+    {
+        "id": "ojo",
+        "image": "/assets/icons/ojo.svg"
+    },
+    {
+        "id": "oracle",
+        "image": "/assets/icons/oracle.svg"
+    },
+    {
+        "id": "organgrinder",
+        "image": "/assets/icons/organgrinder.svg"
+    },
+    {
+        "id": "pacifist",
+        "image": "/assets/icons/pacifist.svg"
+    },
+    {
+        "id": "philosopher",
+        "image": "/assets/icons/philosopher.svg"
+    },
+    {
+        "id": "pithag",
+        "image": "/assets/icons/pithag.svg"
+    },
+    {
+        "id": "pixie",
+        "image": "/assets/icons/pixie.svg"
+    },
+    {
+        "id": "plaguedoctor",
+        "image": "/assets/icons/plaguedoctor.svg"
+    },
+    {
+        "id": "po",
+        "image": "/assets/icons/po.svg"
+    },
+    {
+        "id": "poisoner",
+        "image": "/assets/icons/poisoner.svg"
+    },
+    {
+        "id": "politician",
+        "image": "/assets/icons/politician.svg"
+    },
+    {
+        "id": "poppygrower",
+        "image": "/assets/icons/poppygrower.svg"
+    },
+    {
+        "id": "preacher",
+        "image": "/assets/icons/preacher.svg"
+    },
+    {
+        "id": "professor",
+        "image": "/assets/icons/professor.svg"
+    },
+    {
+        "id": "psychopath",
+        "image": "/assets/icons/psychopath.svg"
+    },
+    {
+        "id": "pukka",
+        "image": "/assets/icons/pukka.svg"
+    },
+    {
+        "id": "puzzlemaster",
+        "image": "/assets/icons/puzzlemaster.svg"
+    },
+    {
+        "id": "ravenkeeper",
+        "image": "/assets/icons/ravenkeeper.svg"
+    },
+    {
+        "id": "recluse",
+        "image": "/assets/icons/recluse.svg"
+    },
+    {
+        "id": "revolutionary",
+        "image": "/assets/icons/revolutionary.svg"
+    },
+    {
+        "id": "riot",
+        "image": "/assets/icons/riot.svg"
+    },
+    {
+        "id": "sage",
+        "image": "/assets/icons/sage.svg"
+    },
+    {
+        "id": "sailor",
+        "image": "/assets/icons/sailor.svg"
+    },
+    {
+        "id": "saint",
+        "image": "/assets/icons/saint.svg"
+    },
+    {
+        "id": "savant",
+        "image": "/assets/icons/savant.svg"
+    },
+    {
+        "id": "scapegoat",
+        "image": "/assets/icons/scapegoat.svg"
+    },
+    {
+        "id": "scarletwoman",
+        "image": "/assets/icons/scarletwoman.svg"
+    },
+    {
+        "id": "seamstress",
+        "image": "/assets/icons/seamstress.svg"
+    },
+    {
+        "id": "sentinel",
+        "image": "/assets/icons/sentinel.svg"
+    },
+    {
+        "id": "shabaloth",
+        "image": "/assets/icons/shabaloth.svg"
+    },
+    {
+        "id": "shugenja",
+        "image": "/assets/icons/shugenja.svg"
+    },
+    {
+        "id": "slayer",
+        "image": "/assets/icons/slayer.svg"
+    },
+    {
+        "id": "snakecharmer",
+        "image": "/assets/icons/snakecharmer.svg"
+    },
+    {
+        "id": "snitch",
+        "image": "/assets/icons/snitch.svg"
+    },
+    {
+        "id": "soldier",
+        "image": "/assets/icons/soldier.svg"
+    },
+    {
+        "id": "spiritofivory",
+        "image": "/assets/icons/spiritofivory.svg"
+    },
+    {
+        "id": "spy",
+        "image": "/assets/icons/spy.svg"
+    },
+    {
+        "id": "steward",
+        "image": "/assets/icons/steward.svg"
+    },
+    {
+        "id": "stormcatcher",
+        "image": "/assets/icons/stormcatcher.svg"
+    },
+    {
+        "id": "summoner",
+        "image": "/assets/icons/summoner.svg"
+    },
+    {
+        "id": "sweetheart",
+        "image": "/assets/icons/sweetheart.svg"
+    },
+    {
+        "id": "tealady",
+        "image": "/assets/icons/tealady.svg"
+    },
+    {
+        "id": "thief",
+        "image": "/assets/icons/thief.svg"
+    },
+    {
+        "id": "tinker",
+        "image": "/assets/icons/tinker.svg"
+    },
+    {
+        "id": "towncrier",
+        "image": "/assets/icons/towncrier.svg"
+    },
+    {
+        "id": "toymaker",
+        "image": "/assets/icons/toymaker.svg"
+    },
+    {
+        "id": "undertaker",
+        "image": "/assets/icons/undertaker.svg"
+    },
+    {
+        "id": "universalinfo",
+        "image": "/assets/icons/universalinfo.svg"
+    },
+    {
+        "id": "vigormortis",
+        "image": "/assets/icons/vigormortis.svg"
+    },
+    {
+        "id": "villageidiot",
+        "image": "/assets/icons/villageidiot.svg"
+    },
+    {
+        "id": "virgin",
+        "image": "/assets/icons/virgin.svg"
+    },
+    {
+        "id": "vizier",
+        "image": "/assets/icons/vizier.svg"
+    },
+    {
+        "id": "vortox",
+        "image": "/assets/icons/vortox.svg"
+    },
+    {
+        "id": "voudon",
+        "image": "/assets/icons/voudon.svg"
+    },
+    {
+        "id": "washerwoman",
+        "image": "/assets/icons/washerwoman.svg"
+    },
+    {
+        "id": "widow",
+        "image": "/assets/icons/widow.svg"
+    },
+    {
+        "id": "witch",
+        "image": "/assets/icons/witch.svg"
+    },
+    {
+        "id": "wizard",
+        "image": "/assets/icons/wizard.svg"
+    },
+    {
+        "id": "xaan",
+        "image": "/assets/icons/xaan.svg"
+    },
+    {
+        "id": "yaggababble",
+        "image": "/assets/icons/yaggababble.svg"
+    },
+    {
+        "id": "zealot",
+        "image": "/assets/icons/zealot.svg"
+    },
+    {
+        "id": "zombuul",
+        "image": "/assets/icons/zombuul.svg"
+    }
+]

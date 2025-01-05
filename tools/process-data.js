@@ -46,8 +46,8 @@ const writeData = (property, data, isDebug = false) => {
     );
     const indent = (
         isDebug
-        ? "    "
-        : ""
+        ? 4
+        : 0
     );
 
     return [
@@ -137,6 +137,7 @@ const createInfoTokens = (tokenFiles) => processFiles(tokenFiles).then(([
  */
 const createRoles = (roleFiles) => processFiles(roleFiles).then(([
     rawRoles,
+    images,
     universalRoles,
     localeRoles,
     localeJinxes,
@@ -147,6 +148,7 @@ const createRoles = (roleFiles) => processFiles(roleFiles).then(([
 
         Object.assign(
             role,
+            images.find(({ id }) => id === role.id) || {},
             localeRoles.find(({ id }) => id === role.id) || {},
         );
 
@@ -204,6 +206,18 @@ const createScripts = (scriptFiles) => processFiles(scriptFiles).then(([
 
 }));
 
+/**
+ * Creates the localised translations (i18n = internationalisation).
+ * 
+ * @param {Promise[]} i18nFiles Files needed to process the texts. 
+ * @returns {Promise} A promise that resolves the with localised texts.
+ */
+const createI18n = (i18nFiles) => processFiles(i18nFiles).then(([
+    localeI18n,
+]) => new Promise((resolve, reject) => {
+    resolve(localeI18n);
+}));
+
 /*
 Process the data.
 */
@@ -217,10 +231,11 @@ readdir(getPathName("../data/locales")).then((dirs) => {
     // it all.
 
     const rawFiles = Object.entries({
+        images: "images.json",
         infoTokens: "info-tokens.json",
         roles: "roles.json",
-        universal: "universal.json",
         scripts: "scripts.json",
+        universal: "universal.json",
     }).reduce((files, [name, fileName]) => {
 
         const pathName = getPathName(`../data/raw/${fileName}`);
@@ -242,6 +257,7 @@ readdir(getPathName("../data/locales")).then((dirs) => {
         // Get the files from the current locale.
 
         const localeFiles = Object.entries({
+            i18n: "i18n.json",
             infoTokens: "info-tokens.json",
             jinxes: "jinxes.json",
             roles: "roles.json",
@@ -266,6 +282,7 @@ readdir(getPathName("../data/locales")).then((dirs) => {
             ]),
             createRoles([
                 rawFiles.roles,
+                rawFiles.images,
                 rawFiles.universal,
                 localeFiles.roles,
                 localeFiles.jinxes,
@@ -274,10 +291,14 @@ readdir(getPathName("../data/locales")).then((dirs) => {
                 rawFiles.scripts,
                 localeFiles.scripts,
             ]),
+            createI18n([
+                localeFiles.i18n,
+            ]),
         ]).then(([
             infoTokens,
             roles,
             scripts,
+            i18n,
         ]) => {
 
             // Write the locale file, telling the console when it's done.
@@ -290,6 +311,7 @@ readdir(getPathName("../data/locales")).then((dirs) => {
                     infoTokens,
                     roles,
                     scripts,
+                    i18n,
                 }, isDebug),
             ).then(() => {
 

@@ -1,4 +1,11 @@
 import type {
+    II18nData,
+    II18nModifiers,
+    II18nAccessors,
+    II18nEvents,
+    II18nHelpers,
+} from "../slices/i18n/types";
+import type {
     IInfoData,
     IInfoModifiers,
     IInfoAccessors,
@@ -25,6 +32,7 @@ export type IStoreSettings = {
 // allows TypeScript to work across modules.
 
 export type IStoreSlices = {
+    "i18n": Slice<II18nData, II18nModifiers, II18nAccessors, II18nEvents, II18nHelpers>,
     "info-tokens": Slice<IInfoData, IInfoModifiers, IInfoAccessors, IInfoEvents, IInfoHelpers>,
     "roles": Slice<IRoleData, IRoleModifiers, IRoleAccessors, IRoleEvents, IRoleHelpers>,
 };

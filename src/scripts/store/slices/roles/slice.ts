@@ -68,6 +68,9 @@ export default new Slice<
         getSpecialRoles({ state }) {
             return state.roles.filter(({ edition }) => edition === "special");
         },
+        getScript({ state }) {
+            return state.script;
+        },
         getScripts({ state }) {
             return state.scripts;
         },
