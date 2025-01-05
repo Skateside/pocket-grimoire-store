@@ -88,6 +88,51 @@
             </template>
         </details>
 
+        <details>
+            <summary>Role Selection</summary>
+            <div>
+
+                <form id="role-select-form">
+                    <div id="role-select-groups" data-text="{0} ({1}/{2})"></div>
+                    <p>
+                        <button type="button" id="role-select-random">Select Random</button>
+                        <button type="submit">Draw</button>
+                    </p>
+                </form>
+
+                <template id="role-select-group-template">
+                    <fieldset class="js--role-select-group--team">
+                        <legend class="js--role-select-group--legend"></legend>
+                        <div class="js--role-select-group--items"></div>
+                    </fieldset>
+                </template>
+
+                <template id="role-select-item-template">
+                    <div class="js--role-select-item--role">
+                        <div class="js--role-select-item--count">
+                            <label data-text="Quantity for {0}" class="js--role-select-item--quantity"></label>
+                            <input type="range" class="js--role-select-item--input" value="0" min="0" step="1" max="15">
+                            <output class="js--role-select-item--output" aria-hidden="true">0</output>
+                        </div>
+                        <label class="js--role-select-item--label">
+                            <input type="checkbox" class="js--role-select-item--checkbox" name="role-select[]">
+                            <!-- <img class="js--role-select--image"> -->
+                            <span class="js--role-select-item--name"></span>
+                            <span class="js--role-select-item--ability"></span>
+                        </label>
+                    </div>
+                </template>
+
+                <h3>Select your character</h3>
+                <ol class="js--role-draw"></ol>
+
+                <template id="role-draw">
+                    <button type="button" class="js--role-draw--button"></button>
+                </template>
+
+            </div>
+        </details>
+
         <details id="info-token-wrapper">
             <summary>Info Tokens</summary>
             <div>

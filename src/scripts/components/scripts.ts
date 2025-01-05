@@ -100,7 +100,16 @@ export default function scripts(getSlice: IAppGetSlice) {
         }
 
         field.process().then(
-            (script) => slice.actions.setScript(script),
+            ({ success, message }) => {
+
+                if (success) {
+                    slice.actions.setScript(message);
+                } else {
+                    field.setCustomValidity(message);
+                    customForm.reportValidity();
+                }
+
+            },
             (reason) => {
                 field.setCustomValidity(reason);
                 customForm.reportValidity();

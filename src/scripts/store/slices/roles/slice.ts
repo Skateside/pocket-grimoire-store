@@ -104,19 +104,17 @@ export default new Slice<
     },
     load(initialState, data) {
 
-        const { PG } = (window as any);
-
         return {
             roles: [
                 ...initialState.roles,
-                ...PG.roles,
+                ...window.PG.roles,
             ],
             homebrew: [
                 ...initialState.homebrew,
                 ...(data?.homebrew || []),
             ],
             scripts: {
-                ...PG.scripts,
+                ...window.PG.scripts,
             },
             script: [
                 ...(data?.script || []),

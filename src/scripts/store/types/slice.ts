@@ -1,6 +1,5 @@
 import {
     AnyFunction,
-    // Tail,
 } from "../../types/lib";
 import Observer from "../../Observer";
 
@@ -68,9 +67,3 @@ export type ISliceHelper<TFunction extends AnyFunction = AnyFunction> = TFunctio
 export type ISliceHelpers<THelpers extends Record<string, AnyFunction> = {}> = {
     [K in keyof THelpers]: ISliceHelper<THelpers[K]>;
 };
-
-// export type ISliceHelpers<
-//     THelpers extends Record<string, AnyFunction> = Record<string, AnyFunction>,
-// > = {
-//     [K in keyof THelpers]: (info: {}, ...args: Parameters<THelpers[K]>) => ReturnType<THelpers[K]>
-// };

@@ -1,6 +1,6 @@
 import type {
-    IRoleScript,
-} from "../store/slices/roles/types";
+    IInputProcessorResponse,
+} from "./types";
 
 export default abstract class InputProcessor<
     Input extends HTMLInputElement | HTMLTextAreaElement = HTMLInputElement | HTMLTextAreaElement
@@ -46,7 +46,7 @@ export default abstract class InputProcessor<
         return this.isEnabled() && this.active;
     }
 
-    process(): Promise<IRoleScript> {
+    process(): Promise<IInputProcessorResponse> {
         return Promise.reject(new Error("Not set up"));
     }
 

@@ -1,6 +1,6 @@
 import type {
-    IRoleScript,
-} from "../store/slices/roles/types";
+    IInputProcessorResponse,
+} from "./types";
 import InputProcessor from "./InputProcessor";
 
 export default class URL extends InputProcessor<HTMLInputElement> {
@@ -13,7 +13,7 @@ export default class URL extends InputProcessor<HTMLInputElement> {
             return Promise.reject(this.input.dataset.errorOffline || "offline");
         }
 
-        return new Promise<IRoleScript>((resolve, reject) => {
+        return new Promise<IInputProcessorResponse>((resolve, reject) => {
 
             const url = new window.URL("/url-proxy.php", href);
             url.searchParams.append("url", this.input.value);
