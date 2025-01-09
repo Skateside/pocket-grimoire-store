@@ -1,11 +1,15 @@
 import type {
+    AnyObject,
+} from "./types/lib";
+import type {
+    IObserver,
     IObserverHandler,
     IObserverTrigger,
 } from "./types/classes";
 
 export default class Observer<
-    TEventMap extends Record<string, any> = Record<string, any>,
-> {
+    TEventMap extends AnyObject = AnyObject,
+> implements IObserver {
 
     private element: HTMLElement;
     private map = new WeakMap<IObserverHandler, EventListener>();

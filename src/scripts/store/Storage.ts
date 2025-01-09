@@ -1,4 +1,8 @@
-export default class Storage {
+import type {
+    IStorage,
+} from "./types/storage";
+
+export default class Storage implements IStorage {
 
     private key: string;
 

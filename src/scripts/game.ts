@@ -8,14 +8,16 @@ import infoTokensComponent from "./components/infoTokens";
 import scriptsComponent from "./components/scripts";
 import rolesComponent from "./components/roles";
 
-const application = new App({
+// Since this is called "game", there can be another one called "sheet" etc.
+
+const game = new App({
     store: new Store({
         observer: new Observer(),
         storage: new Storage("pg"),
     }),
 });
 
-application
+game
     .addSlice(infoTokensSlice)
     .addSlice(rolesSlice)
     .addComponent(infoTokensComponent)
@@ -23,4 +25,5 @@ application
     .addComponent(rolesComponent)
     .run();
 
-console.log({ application });
+console.log({ game });
+(window as any).game = game;

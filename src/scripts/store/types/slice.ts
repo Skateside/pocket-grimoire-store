@@ -1,12 +1,35 @@
-import {
+import type {
     AnyFunction,
+    AnyObject,
 } from "../../types/lib";
-import Observer from "../../Observer";
+import type {
+    IObserver,
+} from "../../types/classes";
+
+export type ISlice<
+    TData = any,
+    TModifiers extends AnyObject = {
+        [K: string]: TData,
+    },
+    TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
+    TEvents extends AnyObject = AnyObject,
+    THelpers extends Record<string, AnyFunction> = {},
+> = {
+    name: string,
+    actions: ISliceActions<TModifiers>,
+    references: ISliceReferences<TAccessors>,
+    events: ISliceEvents<TData, TEvents>,
+    helpers: ISliceHelpers<THelpers>,
+    getData(): TData,
+    save(): boolean,
+    load(data?: TData): boolean,
+    setObserver(observer: IObserver): void,
+};
 
 export type ISliceModifier<
     TData = any,
     TPayload = TData,
-    TEvents = Record<string, any>,
+    TEvents = AnyObject,
 > = (info: {
     payload: TPayload,
     state: TData,
@@ -16,7 +39,7 @@ export type ISliceModifier<
     ) => void
 }) => void;
 
-export type ISliceActions<TModifiers extends Record<string, any>> = {
+export type ISliceActions<TModifiers extends AnyObject> = {
     [K in keyof TModifiers]: (payload: TModifiers[K]) => void;
 };
 
@@ -41,7 +64,7 @@ export type ISliceSettings<
     TData = any,
     TModifiers = Record<string, ISliceModifier<TData>>,
     TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
-    TEvents = Record<string, any>,
+    TEvents = AnyObject,
     THelpers extends Record<string, AnyFunction> = {},
 > = {
     name: string,
@@ -59,8 +82,8 @@ export type ISliceSettings<
 
 export type ISliceEvents<
     TData = any,
-    TEventMap extends Record<string, any> = Record<string, any>,
-> = Pick<Observer<{ updateStore: TData } & TEventMap>, "on" | "off">;
+    TEventMap extends AnyObject = AnyObject,
+> = Pick<IObserver<{ updateStore: TData, save: TData, load: TData } & TEventMap>, "on" | "off">;
 
 export type ISliceHelper<TFunction extends AnyFunction = AnyFunction> = TFunction;
 

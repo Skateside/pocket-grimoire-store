@@ -76,6 +76,7 @@ export default new Slice<
         return data.filter(({ type }) => type === "custom");
     },
     load(initialState, data = []) {
+
         return [
             ...initialState,
             ...window.PG.infoTokens,
