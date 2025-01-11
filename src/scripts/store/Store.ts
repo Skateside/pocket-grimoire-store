@@ -5,6 +5,7 @@ import type {
     ISlice,
 } from "./types/slice";
 import type {
+    IStore,
     IStoreSettings,
 } from "./types/store";
 import type {
@@ -14,7 +15,7 @@ import {
     UnrecognisedSliceError,
 } from "../errors";
 
-export default class Store {
+export default class Store implements IStore {
 
     protected slices: Record<string, ISlice>;
     protected storage: IStorage;
@@ -36,15 +37,14 @@ export default class Store {
         slices[name] = slice;
         slice.setObserver(events);
 
-        slice.events.on("save", (data) => {
+        const { on } = slice.events;
+
+        on("save", (data) => {
             this.storage.set(name, data);
         });
 
-        slice.events.on("updateStore", () => {
-
-            slice.save();
+        on("updateStore", () => {
             events.trigger("updateStore", this.getFullState());
-
         });
 
     }

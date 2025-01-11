@@ -2,6 +2,7 @@ import App from "./App";
 import Observer from "./Observer";
 import Store from "./store/Store";
 import Storage from "./store/Storage";
+import i18nSlice from "./store/slices/i18n/slice";
 import infoTokensSlice from "./store/slices/infotokens/slice";
 import rolesSlice from "./store/slices/roles/slice";
 import infoTokensComponent from "./components/infoTokens";
@@ -18,6 +19,7 @@ const game = new App({
 });
 
 game
+    .addSlice(i18nSlice)
     .addSlice(infoTokensSlice)
     .addSlice(rolesSlice)
     .addComponent(infoTokensComponent)
@@ -25,5 +27,5 @@ game
     .addComponent(rolesComponent)
     .run();
 
-console.log({ game });
+// console.log({ game });
 (window as any).game = game;

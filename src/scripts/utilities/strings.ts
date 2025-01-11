@@ -21,25 +21,6 @@ export function randomId(prefix = "") {
 }
 
 /**
- * Takes a space-separated collection of words and returns a de-duplicated array
- * of those words. If the given `text` is blank, an empty array is returned.
- *
- * @param text Text whose words should be returned.
- * @returns Array of unique words.
- */
-export function wordlist<TList = string>(text: string) {
-
-    const trimmed = text.trim();
-
-    return (
-        trimmed
-        ? unique(trimmed.split(/\s+/))
-        : []
-    ) as TList[];
-
-}
-
-/**
  * Interprets the bytes within a string as UTF-8. We need this when importing
  * JSON - for some reason it struggles to understand accented characters.
  *
@@ -103,5 +84,57 @@ export function readUTF8(bytes: string) {
     }
 
     return string;
+
+}
+
+/**
+ * Takes a string containing placeholders (denoted between `{` and `}`) and
+ * replaces them with the entries in `replacements`.
+ *
+ * @param template String containing placeholders.
+ * @param replacements Replacements for those placeholders.
+ * @returns A string with the placeholders replaced.
+ *
+ * @example
+ * supplant("Hello {thing}", { thing: "world" }); // "Hello world"
+ * supplany("Count: {0}", [1]); // "Count: 1"
+ */
+export function supplant(
+    template: string,
+    replacements: Record<string, number | string> | (number | string)[],
+) {
+
+    return template.replace(/\{([^{}]*)\}/g, (whole: string, index: string) => {
+
+        return String(
+            Object.hasOwn(replacements, index)
+            ? (
+                Array.isArray(replacements)
+                ? replacements[Number(index)]
+                : replacements[index]
+            )
+            : whole
+        );
+
+    });
+
+}
+
+/**
+ * Takes a space-separated collection of words and returns a de-duplicated array
+ * of those words. If the given `text` is blank, an empty array is returned.
+ *
+ * @param text Text whose words should be returned.
+ * @returns Array of unique words.
+ */
+export function wordlist<TList = string>(text: string) {
+
+    const trimmed = text.trim();
+
+    return (
+        trimmed
+        ? unique(trimmed.split(/\s+/))
+        : []
+    ) as TList[];
 
 }

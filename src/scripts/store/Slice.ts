@@ -124,6 +124,7 @@ export default class Slice<
             }
 
             this.data = update(currentState as AnyObject, diff) as TData;
+            this.save();
             observer?.trigger(`${name}/updateStore`, this.data);
 
         };

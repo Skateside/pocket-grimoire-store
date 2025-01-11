@@ -1,20 +1,24 @@
 import type {
     IAppGetSlice,
 } from "./types/app";
-import Store from "./store/Store";
-import Slice from "./store/Slice";
+import type {
+    IStore,
+} from "./store/types/store";
+import type {
+    ISlice,
+} from "./store/types/slice";
 
 export default class App {
 
-    protected store: Store;
+    protected store: IStore;
     protected components: ((getSlice: IAppGetSlice) => void)[];
 
-    constructor({ store }: { store: Store }) {
+    constructor({ store }: { store: IStore }) {
         this.store = store;
         this.components = [];
     }
 
-    addSlice(slice: Slice) {
+    addSlice(slice: ISlice) {
         this.store.addSlice(slice);
         return this;
     }

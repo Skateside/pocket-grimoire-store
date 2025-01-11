@@ -110,3 +110,38 @@ export function renderTemplate(
     return clone;
 
 }
+
+/**
+ * A variation of {@link renderTemplate} that takes a collection of items and
+ * passes each one to the given `handler` to generate the `populates`.
+ *
+ * @param selector CSS selector identifying the `<template>` element.
+ * @param collection Collection of items that will generate each template.
+ * @param handler A function that takes each item in `collection` and creates
+ *        the `populates` parameter for {@link renderTemplate}.
+ * @returns A `DocumentFragment` containing the rendered templates.
+ */
+export function renderTemplateMany<T extends any = any>(
+    selector: string,
+    collection: T[],
+    handler: (
+        item: T,
+        index: number,
+    ) => Record<string, (element: HTMLElement) => void>,
+) {
+
+    return Array.prototype.reduce.call(
+        collection,
+        (fragment, item, index) => {
+
+            (fragment as DocumentFragment).append(
+                renderTemplate(selector, handler(item, index))
+            );
+
+            return fragment;
+
+        },
+        document.createDocumentFragment(),
+    ) as DocumentFragment;
+
+}
