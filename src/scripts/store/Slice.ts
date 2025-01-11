@@ -136,6 +136,8 @@ export default class Slice<
         return Object.fromEntries(
             Object.entries(accessors).map(([property, accessor]) => [
                 property,
+                this.makeReference(accessor, property),
+                /*
                 (...args: Tail<Parameters<ISliceAccessor>>) => {
 
                     const references = Object.assign(
@@ -155,11 +157,43 @@ export default class Slice<
                     }, ...args);
 
                 },
+                */
             ])
         ) as ISliceReferences<TAccessors>;
 
     }
     
+    protected makeReference(accessor: ISliceAccessor, property: string) {
+
+        return (...args: Tail<Parameters<ISliceAccessor>>) => {
+
+            // const references = Object.assign(
+            //     {},
+            //     this.references,
+            //     {
+            //         [property]() {
+            //             throw new SelfReferenceError(property);
+            //         },
+            //     },
+            // );
+
+            const references = {
+                ...this.references,
+                [property]() {
+                    throw new SelfReferenceError(property);
+                },
+            };
+
+            return accessor({
+                references,
+                state: this.getData(),
+                helpers: { ...this.helpers },
+            }, ...args);
+
+        };
+
+    }
+
     protected makeEvents() {
 
         return {

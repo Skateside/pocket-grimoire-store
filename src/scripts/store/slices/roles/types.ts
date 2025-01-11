@@ -80,6 +80,7 @@ export type IRoleData = {
     roles: IRole[],
     homebrew: Partial<IRole>[],
     scripts: Record<string, IRoleScript>,
+    // TODO: Move this to a "game" slice.
     script: IRoleScript,
 };
 
@@ -91,6 +92,7 @@ export type IRoleModifiers = {
 export type IRoleAccessors = {
     getRole: (id: string) => IRole,
     getSpecialRoles: () => IRole[],
+    // TODO: Move this to a "game" slice.
     getScript: () => IRoleScript,
     getScripts: () => Record<string, IRoleScript>,
     getScriptById: (id: string) => IRoleScript,

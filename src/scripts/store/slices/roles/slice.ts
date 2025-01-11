@@ -29,6 +29,7 @@ export default new Slice<
         roles: [],
         homebrew: [],
         scripts: {},
+        // TODO: Move this to a "game" slice
         script: [],
     },
     modifiers: {
@@ -38,6 +39,7 @@ export default new Slice<
             // TODO: reset all jinxes to be "theoretical"?
             return state;
         },
+        // TODO: Move this to a "game" slice.
         setScript({ state, payload, trigger }) {
             state.script = payload;
             trigger("script-set", payload);
@@ -71,6 +73,7 @@ export default new Slice<
         getSpecialRoles({ state }) {
             return state.roles.filter(({ edition }) => edition === "special");
         },
+        // TODO: Move this into a "game" slice.
         getScript({ state }) {
             return state.script;
         },
