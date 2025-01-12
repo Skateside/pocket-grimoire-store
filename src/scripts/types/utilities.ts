@@ -1,5 +1,5 @@
-export type IObjectDiff = (
+export type IObjectDiff = Record<string, (
     { type: "remove" }
     | { type: "new" | "update", value: any }
-    | { type: "children", value: Record<PropertyKey, IObjectDiff> }
-);
+    | { type: "children", value: IObjectDiff }
+)>;

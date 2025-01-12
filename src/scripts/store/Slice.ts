@@ -100,7 +100,11 @@ export default class Slice<
 
         return <T = any>(payload: T) => {
             
-            const { name, observer, data } = this;
+            const {
+                data,
+                name,
+                observer,
+            } = this;
             const currentState = structuredClone(data);
             const givenState = structuredClone(data);
             const response = modifier({

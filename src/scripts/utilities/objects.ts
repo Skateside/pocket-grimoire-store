@@ -164,7 +164,7 @@ export const difference = (
     update: AnyObject,
 ) => {
 
-    const diff: Record<string, IObjectDiff> = Object.create(null);
+    const diff: IObjectDiff = Object.create(null);
 
     Object.keys(source).forEach((key) => {
 
@@ -228,7 +228,7 @@ export const difference = (
  */
 export const update = <T extends AnyObject = AnyObject>(
     source: T,
-    difference: Record<string, IObjectDiff>,
+    difference: IObjectDiff,
 ): Partial<T> & AnyObject => {
 
     const updated = structuredClone(source) as Partial<T> & AnyObject;

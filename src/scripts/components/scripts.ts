@@ -54,7 +54,7 @@ export default function scripts(getSlice: IAppGetSlice) {
                     input.required = index === 0;
                 },
                 ".js--script-select--name"(element) {
-                    const meta = slice.helpers.getMeta(script);
+                    const meta = slice.helpers.getMetaRole(script);
                     element.textContent = meta?.name || "";
                 },
             }));

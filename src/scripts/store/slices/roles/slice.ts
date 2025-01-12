@@ -1,6 +1,6 @@
 import type {
-    // IRole,
-    // IRoleJinx,
+    IRole,
+    IRoleJinx,
     IRoleData,
     IRoleModifiers,
     IRoleAccessors,
@@ -9,10 +9,13 @@ import type {
     // IRoleMeta,
 } from "./types";
 import {
-    // UnrecognisedRoleError,
+    UnrecognisedRoleError,
     UnrecognisedScriptError,
 } from "./errors";
 import Slice from "../../Slice";
+import {
+    difference,
+} from "../../../utilities/objects";
 
 export default new Slice<
     IRoleData,
@@ -28,11 +31,11 @@ export default new Slice<
         script: [],
     },
     modifiers: {
-        reset({ state }) {
-            state.script.length = 0;
-            // TODO: reset all jinxes to be "theoretical"?
-            return state;
-        },
+        // reset({ state }) {
+        //     state.script.length = 0;
+        //     // TODO: reset all jinxes to be "theoretical"?
+        //     return state;
+        // },
         setScript({ state, payload, trigger }) {
             state.script = payload;
             trigger("script-set", payload);
@@ -43,27 +46,52 @@ export default new Slice<
         getRole({ state }, id: string) {
             return state.roles.find((role) => role.id === id);
         },
-        // getRoleDiff({ state }, id: string) {
+        getScriptRole({ helpers, state }, id: string) {
 
-        //     return [];
+            return state.script.find((role) => (
+                role === id
+                || (
+                    !helpers.isMetaRole(role)
+                    && helpers.asRoleObject(role).id === id
+                )
+            )) as IRole | string;
 
-        // },
-        /*
-        getRole({ state }, id: string) {
+        },
+        getRoleDiff({ helpers, references }, id: string) {
 
-            const role = state.roles.find((role) => role.id === id);
-            const augment = state.homebrew.find((role) => role.id === id);
+            const role = references.getRole(id);
+            const homebrew = references.getScriptRole(id);
 
-            if (!role && !augment) {
+            if (!role && !homebrew) {
                 throw new UnrecognisedRoleError(id);
             }
 
+            return difference(
+                role || {},
+                (
+                    homebrew === undefined
+                    ? {}
+                    : helpers.asRoleObject(homebrew)
+                ),
+            );
+
+        },
+        getFullRole({ helpers, references }, id: string) {
+
+            const role = references.getRole(id);
+            const homebrew = references.getScriptRole(id);
+
+            if (!role && !homebrew) {
+                throw new UnrecognisedRoleError(id);
+            }
+
+            const update = helpers.asRoleObject(homebrew || ({ id } as IRole));
             const data = {
                 ...(role || {}),
-                ...(augment || {}),
+                ...update,
             } as IRole;
 
-            const jinxes = combineJinxes(role?.jinxes, augment?.jinxes);
+            const jinxes = combineJinxes(role?.jinxes, update.jinxes);
 
             if (jinxes) {
                 data.jinxes = jinxes;
@@ -72,13 +100,9 @@ export default new Slice<
             return data;
 
         },
-        */
-        /*
-        getSpecialRoles({ state }) {
-            return state.roles.filter(({ edition }) => edition === "special");
+        getSpecialRoles({ helpers, state }) {
+            return state.roles.filter((role) => helpers.isSpecialRole(role));
         },
-        */
-        // TODO: Move this into a "game" slice.
         getScript({ state }) {
             return state.script;
         },
@@ -96,13 +120,13 @@ export default new Slice<
             return script;
 
         },
-        // getTeams({ state ]) {
-            
-        // }.
     },
     methods: {
         isMetaRole(_info, role) {
             return typeof role === "object" && role.id === "_meta";
+        },
+        isSpecialRole(_info, role) {
+            return (role as IRole).edition === "special";
         },
         getMetaRole({ helpers }, script) {
             return script.find((role) => helpers.isMetaRole(role));
@@ -149,17 +173,16 @@ export default new Slice<
     },
 });
 
-/*
 const combineJinxes = (
     roleJinxes?: IRoleJinx[],
-    augmentJinxes?: IRoleJinx[],
+    homebrewJinxes?: IRoleJinx[],
 ) => {
 
-    if (!roleJinxes?.length && !augmentJinxes?.length) {
+    if (!roleJinxes?.length && !homebrewJinxes?.length) {
         return;
     }
 
-    return (augmentJinxes || []).reduce((jinxes, { id, reason }) => {
+    return (homebrewJinxes || []).reduce((jinxes, { id, reason }) => {
 
         const index = jinxes.findIndex(({ id: jinxId }) => id === jinxId);
 
@@ -187,4 +210,3 @@ const combineJinxes = (
     }, roleJinxes || []);
 
 };
-*/

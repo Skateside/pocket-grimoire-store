@@ -90,14 +90,16 @@ export type IRoleData = {
 };
 
 export type IRoleModifiers = {
-    reset: void,
+    // reset: void,
     setScript: IRoleScript,
 };
 
 export type IRoleAccessors = {
     getRole: (id: string) => IRole | void,
-    // getRoleDiff: (id: string) => IObjectDiff,
-    // getSpecialRoles: () => IRole[],
+    getScriptRole: (id: string) => string | IRole | void,
+    getFullRole: (id: string) => IRole,
+    getRoleDiff: (id: string) => IObjectDiff,
+    getSpecialRoles: () => IRole[],
     getScript: () => IRoleScript,
     getScripts: () => Record<string, IRoleScript>,
     getScriptById: (id: string) => IRoleScript,
@@ -109,7 +111,8 @@ export type IRoleEvents = {
 
 export type IRoleMethods = {
     isMetaRole: (role: IRole | IRoleMeta | string) => role is IRoleMeta,
+    isSpecialRole: (role: IRole | IRoleMeta) => role is IRole & { edition: "special" },
     getMetaRole: (script: IRoleScript) => IRoleMeta | void,
     getId: (role: IRole | IRoleMeta | string) => string,
-    asRoleObject: (role: IRole | IRoleMeta | string) => RequireOnly<IRole | IRoleMeta, "id">,
+    asRoleObject: (role: IRole | string) => RequireOnly<IRole, "id">,
 };

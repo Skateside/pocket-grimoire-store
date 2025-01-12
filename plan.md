@@ -386,3 +386,9 @@ A "settings" slice would keep track of any settings that are set.
 
 The `<input>` elements need to have their values remembered.
 This is mainly to keep track of the settings that have been chosen, and/such as the script that's been chosen.
+
+## Use WebComponents to create Tabs
+
+Also create the "range slider with output" as a WebComponent.
+
+I've had to hack the `Tabs` class to add a `Tabs.create()` function, which returns the instance, setting up the tabs. This feels wrong because I'm creating an instance just to ignore it. WebComponents might be the better solution as they can create the tabs for me.

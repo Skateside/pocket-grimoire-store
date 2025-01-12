@@ -6,13 +6,13 @@ const slice = new Slice<{
     PetModifiers,
     PetAccessors,
     PetEvents,
-    PetHelpers
+    PetMethods
 }>({
     name: "pets",
     initialState: [],
     modifiers: {},
     accessors: {},
-    helpers: {},
+    methods: {},
     save(data) {
     },
     load(initialState, data) {
@@ -26,7 +26,7 @@ The `Slice` takes 5 generic variables:
 2. Modifiers - method names versus the payload type.
 3. Accessors - methods versus functions (including parameters) and the return value.
 4. Events - event names versus the detail.
-5. Helpers - a collection of simple but related functions.
+5. Methods - a collection of simple but related functions.
 
 ### Data Variable
 
@@ -86,7 +86,7 @@ slice.actions.add({
 
 Accessors allow part of the slice's data to be accessed and returned. They're defined as methods to functions because they might have additional parameters.
 
-The first parameter in an accessor is information. It's an object containing 2 properties:
+The first parameter in an accessor is information. It's an object containing 3 properties:
 
 - `state`: A copy of the current state. Mutating this does not affect the state itself.
 - `references`: Any references that are created as a result of these accessors.
@@ -149,21 +149,29 @@ slice.events.on("add", (datum) => {
 });
 ```
 
-### Helpers Variable
+### Methods Variable
 
-Helpers are simple functions that can help perform some basic actions. Unlike other variables, they create a property with the same name.
+Methods are simple functions that can help perform some basic actions. They get passsed to references and actions, allowing functionality to be re-used rather than re-written.
+
+Methods create **helpers**.
+
+Methods get passed information that has a few properties:
+
+- `helpers`: Any helpers that have been defined, except for the current method.
 
 ```ts
-type PetHelpers = {
+type PetMethods = {
     getName: (pet: Pet) => string,
 };
 
 const slice = new Slice<
-    PetHelpers,
+    PetMethods,
     // ...
 }({
-    getName(pet) {
-        return pet.name;
+    methods: {
+        getName({ helpers }, pet) {
+            return pet.name;
+        },
     },
 });
 
