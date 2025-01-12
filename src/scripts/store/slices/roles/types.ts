@@ -1,3 +1,10 @@
+import type {
+    RequireOnly,
+} from "../../../types/lib";
+import type {
+    IObjectDiff,
+} from "../../../types/utilities";
+
 export type IRole = {
     id: string,
     team: IRoleTeam,
@@ -78,9 +85,7 @@ export type IRoleScript = (IRoleMeta | IRole | string)[];
 
 export type IRoleData = {
     roles: IRole[],
-    homebrew: Partial<IRole>[],
     scripts: Record<string, IRoleScript>,
-    // TODO: Move this to a "game" slice.
     script: IRoleScript,
 };
 
@@ -90,9 +95,9 @@ export type IRoleModifiers = {
 };
 
 export type IRoleAccessors = {
-    getRole: (id: string) => IRole,
-    getSpecialRoles: () => IRole[],
-    // TODO: Move this to a "game" slice.
+    getRole: (id: string) => IRole | void,
+    // getRoleDiff: (id: string) => IObjectDiff,
+    // getSpecialRoles: () => IRole[],
     getScript: () => IRoleScript,
     getScripts: () => Record<string, IRoleScript>,
     getScriptById: (id: string) => IRoleScript,
@@ -103,5 +108,8 @@ export type IRoleEvents = {
 };
 
 export type IRoleMethods = {
-    getMeta: (script: IRoleScript) => IRoleMeta | void,
+    isMetaRole: (role: IRole | IRoleMeta | string) => role is IRoleMeta,
+    getMetaRole: (script: IRoleScript) => IRoleMeta | void,
+    getId: (role: IRole | IRoleMeta | string) => string,
+    asRoleObject: (role: IRole | IRoleMeta | string) => RequireOnly<IRole | IRoleMeta, "id">,
 };
