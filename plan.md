@@ -50,6 +50,7 @@ class Slice<
 
 A "game" slice would keep track of the game itself
 - the script that's been loaded (data can come from "roles" slice) (should remove this from the "roles" slice).
+    _NOTE_ it makes more sense to keep this in the "roles" slice since all the role information is there.
 - number of players (and travellers)
 - player names
 - seats (inc name and role)
@@ -59,6 +60,11 @@ A "game" slice would keep track of the game itself
 Because this contains the "script" itself, we don't need to have any "homebrew" roles.
 
 ```typescript
+/*
+Script information in "game" slice - too seperated, too much work to get basic
+information.
+*/
+
 const rolesSlice = new Slice({
     initialState: {
         roles: [/* ... */],
@@ -66,7 +72,7 @@ const rolesSlice = new Slice({
     },
     helpers: {
         augmentRole({ helpers }, official?: IRole, homebrew: Partial<IRole>) {
-
+            /* ... */
         },
         isMetaRole({ helpers }, role: IRole | IRoleMeta | string): role is IRoleMeta {
             return typeof role === "object" && role.id === "_meta";
@@ -107,9 +113,269 @@ const fullRoles = getScript()
     .filter((role) => !isMetaRole(role))
     .map((role) => augmentRole(getRole(getId(role)), asRoleObject(role)));
 
-// NOTE: I don't like this because we end up having to get the data from 2
-// slices - I'd prefer to keep that within 1 slice so I can call 1 function to
-// get the script information.
+```
+
+_NOTE:_ I don't like this because we end up having to get the data from 2 slices - I'd prefer to keep that within 1 slice so I can call 1 function to get the script information.
+
+```typescript
+const rolesSlice = new Slice({
+    initialState: {
+        roles: {},
+        scripts: {},
+        script: [],
+    },
+    accessors: {
+        getRole({ state, helpers }, id: string) {
+
+            const official = state.roles[id];
+            const homehrew = state.script.find((role) => {
+                return role === id || role.id === id;
+            });
+
+            if (!official && !homebrew) {
+                throw new UnregocnisedRoleError(id);
+            }
+
+            return helpers.augmentRole(
+                official,
+                helpers.asRoleObject(homebrew),
+            );
+
+        },
+    },
+    methods: {
+        augmentRole({ helpers }, official?: IRole, homebrew?: Partial<IRole>) {
+            /* ... */
+        },
+        isMetaRole({ helpers }, role: IRole | IRoleMeta | string): role is IRoleMeta {
+            return typeof role === "object" && role.id === "_meta";
+        },
+        getMetaRole({ helpers }, script: IRoleScript) {
+            return script.find((role) => helpers.isMetaRole(role));
+        },
+        getId({ helpers }, role: IRole | string) {
+            return (
+                typeof role === "string"
+                ? role
+                : role.id
+            );
+        },
+        asRoleObject({ helpers }, role: IRole | string) {
+            return (
+                typeof role === "string"
+                ? { id: role } as IRole
+                : role
+            );
+        },
+    },
+});
+
+type IGameCoords = {
+    x: number,
+    y: number,
+    z?: number,
+};
+
+type IGameSeat = {
+    coords: IGameCoords,
+    name?: string,
+    // Store a full Role here. A script that defines a homebrew role might have
+    // been swapped out before the seat's role is cleared. Storing the full role
+    // will allow that information to be displayed even if the script changes.
+    // We need to know if the role can be localised.
+    // roleId?: string,
+    role?: IRole,
+};
+
+// TODO: Remove "roleId` and `index` with the information that's needed for the
+// reminder - this avoids problems described in IGameSeat.
+type IGameReminder = {
+    coords: IGameCoords,
+    reminder: {
+        name: string,
+
+    },
+};
+
+// We need bluff groups so that we can have seperate ones for Lunatic etc.
+// Store the full role for the reasons described in IGameSeat.
+
+type IGameBluffGroup = {
+    name: string,
+    bluffs: [IRole?, IRole?, IRole?],
+};
+
+const gameSlice = new Slice({
+    initialState: {
+        playerCount: 0,
+        travellerCount: 0,
+        names: [], // string[]
+        seats: [], // IGameSeat[]
+        reminders: [], // IGameReminders[]
+        bluffs: [], // IGameBluffGroup[]
+    },
+});
+```
+
+### Localising roles
+
+We need to work out how to localise a role even if the script changes some things.
+
+Scenario:
+
+1. Create a game of Trouble Brewing
+2. Include gender-neutral terms ("Washerwoman" -> "Laundry Hand")
+3. CHange the language to French
+
+```typescript
+const roles = [
+    {
+        "id": "washerwoman",
+        "name": "Washerwoman",
+        "edition": "tb",
+        "team": "townsfolk",
+        "firstNightReminder": "Show the Townsfolk character token. Point to both the *TOWNSFOLK* and *WRONG* players.",
+        "otherNightReminder": "",
+        "reminders": [
+            "Townsfolk",
+            "Wrong"
+        ],
+        "setup": false,
+        "ability": "You start knowing that 1 of 2 players is a particular Townsfolk.",
+        "flavor": "Bloodstains on a dinner jacket? No, this is cooking sherry. How careless.",
+        "firstNight": 46,
+        "otherNight": 0
+    },
+];
+
+const en_GB = [
+    {
+        "id": "washerwoman",
+        "name": "Washerwoman",
+        "ability": "You start knowing that 1 of 2 players is a particular Townsfolk.",
+        "firstNightReminder": "Show the character token of a Townsfolk in play. Point to two players, one of which is that character.",
+        "otherNightReminder": "",
+        "remindersGlobal": [],
+        "reminders": [
+            "Townsfolk",
+            "Wrong"
+        ]
+    },
+];
+
+const script = [
+    {
+        "id": "washerwoman",
+        "name": "Laundry Hand",
+    },
+];
+
+// create the role
+const theRole = {
+    ...roles[0],
+    ...en_GB[0],
+    ...script[0],
+};
+
+const fr_FR = [
+    {
+        "id": "washerwoman",
+        "name": "Lavandière",
+        "ability": "Votre première nuit, le Conteur vous désigne 2 joueurs. Il vous donne ensuite le rôle de Villageois de l’un des deux.",
+        "firstNightReminder": "Désigner 2 joueurs et présenter le jeton rôle Villageois de l'un d'eux.",
+        "otherNightReminder": "",
+        "remindersGlobal": [],
+        "reminders": [
+            "Villageois",
+            "Autre"
+        ]
+    },
+];
+
+// create the role
+const theRole = {
+    ...roles[0],
+    ...fr_FR[0],
+    ...script[0],
+};
+```
+
+Does it make more sense for `IGameSeat` to contain something like a "role diff"? **yes**
+
+```typescript
+// Was
+type IGameSeat = {
+    coords: IGameCoords,
+    name?: string,
+    role?: IRole,
+};
+
+// Better?
+type IGameRoleDiff = {
+    id: string,
+    diff: IObjectDiff,
+};
+
+type IGameSeat = {
+    coords: IGameCoords,
+    name?: string,
+    role?: IGameRoleDiff,
+};
+
+type IGameReminder = {
+    coords: IGameCoords,
+    reminder: IGameRoleDiff & {
+        index: number,
+    },
+};
+
+type IGameBluffGroup = {
+    name: string,
+    bluffs: [IGameRoleDiff?, IGameRoleDiff?, IGameRoleDiff?],
+};
+
+
+const rolesSlice = new Slice({
+    initialState: {
+        roles: {},
+        scripts: {},
+        script: [],
+    },
+    accessors: {
+        getRole({ state }, id: string) {
+            return state.roles[id];
+        },
+        getFullRole({ state, helpers }, id: string) {
+
+            const official = state.roles[id];
+            const homebrew = state.script.find((role) => (
+                role === id || role.id === id
+            ));
+
+            if (!official && !homebrew) {
+                throw new UnregocnisedRoleError(id);
+            }
+
+            return helpers.augmentRole(
+                official,
+                helpers.asRoleObject(homebrew),
+            );
+
+        },
+        getRoleDiff({ state, helpers }, id: string) {
+
+            const official = state.roles[id];
+            const homebrew = helpers.asRoleObject(
+                state.script.find((role) => (
+                    role === id || role.id === id
+                ))
+            );
+
+            return difference(official || {}, homebrew || {});
+
+        },
+    },
+});
 ```
 
 ## Settings Slice
