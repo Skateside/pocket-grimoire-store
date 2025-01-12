@@ -6,4 +6,4 @@ export type IGameAccessors = {};
 
 export type IGameEvents = {};
 
-export type IGameHelpers = {};
+export type IGameMethods = {};

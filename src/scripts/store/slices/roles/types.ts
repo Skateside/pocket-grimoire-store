@@ -102,6 +102,6 @@ export type IRoleEvents = {
     "script-set": IRoleScript,
 };
 
-export type IRoleHelpers = {
+export type IRoleMethods = {
     getMeta: (script: IRoleScript) => IRoleMeta | void,
 };

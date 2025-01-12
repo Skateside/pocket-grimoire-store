@@ -3,7 +3,7 @@ import type {
     IGameModifiers,
     IGameAccessors,
     IGameEvents,
-    IGameHelpers,
+    IGameMethods,
 } from "./types";
 import Slice from "../../Slice";
 
@@ -12,7 +12,7 @@ export default new Slice<
     IGameModifiers,
     IGameAccessors,
     IGameEvents,
-    IGameHelpers
+    IGameMethods
 >({
     name: "game",
     initialState: {
@@ -21,7 +21,7 @@ export default new Slice<
     },
     accessors: {
     },
-    helpers: {
+    methods: {
     },
     save(data) {
 

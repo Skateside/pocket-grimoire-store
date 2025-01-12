@@ -11,7 +11,16 @@ export class PocketGrimoireError extends Error {
     }
 }
 
-// class Store
+// class Slice
+// Attempting to call a helper from its own method (infinite loop).
+export class SelfHelperError extends PocketGrimoireError {
+    constructor(message?: string, options?: ErrorOptions) {
+        super(message, options);
+        this.name = "SelfHelperError";
+    }
+}
+
+// class Slice
 // Attempting to call a reference from its own accessor (infinite loop).
 export class SelfReferenceError extends PocketGrimoireError {
     constructor(message?: string, options?: ErrorOptions) {
@@ -20,7 +29,7 @@ export class SelfReferenceError extends PocketGrimoireError {
     }
 }
 
-// class Store
+// class Slice
 // The requested slice has not been recognised.
 export class UnrecognisedSliceError extends PocketGrimoireError {
     constructor(message?: string, options?: ErrorOptions) {

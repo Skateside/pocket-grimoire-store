@@ -13,13 +13,13 @@ export type ISlice<
     },
     TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
     TEvents extends AnyObject = AnyObject,
-    THelpers extends Record<string, AnyFunction> = {},
+    TMethods extends Record<string, AnyFunction> = {},
 > = {
     name: string,
     actions: ISliceActions<TModifiers>,
     references: ISliceReferences<TAccessors>,
     events: ISliceEvents<TData, TEvents>,
-    helpers: ISliceHelpers<THelpers>,
+    helpers: ISliceHelpers<TMethods>,
     getData(): TData,
     save(): boolean,
     load(data?: TData): boolean,
@@ -30,9 +30,11 @@ export type ISliceModifier<
     TData = any,
     TPayload = TData,
     TEvents = AnyObject,
+    THelpers = AnyObject,
 > = (info: {
     payload: TPayload,
     state: TData,
+    helpers: THelpers,
     trigger: <K extends keyof TEvents>(
         eventName: K,
         detail: TEvents[K],
@@ -65,17 +67,27 @@ export type ISliceSettings<
     TModifiers = Record<string, ISliceModifier<TData>>,
     TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
     TEvents = AnyObject,
-    THelpers extends Record<string, AnyFunction> = {},
+    TMethods extends Record<string, AnyFunction> = {},
 > = {
     name: string,
     initialState: TData,
     modifiers: {
-        [K in keyof TModifiers]: ISliceModifier<TData, TModifiers[K], TEvents>;
+        [K in keyof TModifiers]: ISliceModifier<
+            TData,
+            TModifiers[K],
+            TEvents,
+            TMethods
+        >;
     },
     accessors?: {
-        [K in keyof TAccessors]: ISliceAccessor<TData, TAccessors[K], Omit<ISliceReferences<TAccessors>, K>>;
+        [K in keyof TAccessors]: ISliceAccessor<
+            TData,
+            TAccessors[K],
+            Omit<ISliceReferences<TAccessors>, K>,
+            TMethods
+        >;
     },
-    helpers?: ISliceHelpers<THelpers>,
+    methods?: ISliceHelpers<TMethods>,
     save?: boolean | ((data: TData) => TData),
     load?: false | ((initialState: TData, data?: TData) => TData),
 };
@@ -83,10 +95,13 @@ export type ISliceSettings<
 export type ISliceEvents<
     TData = any,
     TEventMap extends AnyObject = AnyObject,
-> = Pick<IObserver<{ updateStore: TData, save: TData, load: TData } & TEventMap>, "on" | "off">;
+> = Pick<
+    IObserver<{ updateStore: TData, save: TData, load: TData } & TEventMap>,
+    "on" | "off"
+>;
 
-export type ISliceHelper<TFunction extends AnyFunction = AnyFunction> = TFunction;
-
-export type ISliceHelpers<THelpers extends Record<string, AnyFunction> = {}> = {
-    [K in keyof THelpers]: ISliceHelper<THelpers[K]>;
+export type ISliceHelpers<TMethods extends Record<string, AnyFunction> = {}> = {
+    [K in keyof TMethods]: (info: {
+        helpers: Omit<TMethods, K>,
+    }, ...args: Parameters<TMethods[K]>) => ReturnType<TMethods[K]>
 };

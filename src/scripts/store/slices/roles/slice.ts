@@ -5,16 +5,13 @@ import type {
     IRoleModifiers,
     IRoleAccessors,
     IRoleEvents,
-    IRoleHelpers,
+    IRoleMethods,
     IRoleMeta,
 } from "./types";
 import {
     UnrecognisedRoleError,
     UnrecognisedScriptError,
 } from "./errors";
-// import {
-//     unique,
-// } from "../../../utilities/arrays";
 import Slice from "../../Slice";
 
 export default new Slice<
@@ -22,7 +19,7 @@ export default new Slice<
     IRoleModifiers,
     IRoleAccessors,
     IRoleEvents,
-    IRoleHelpers
+    IRoleMethods
 >({
     name: "roles",
     initialState: {
@@ -95,8 +92,8 @@ export default new Slice<
             
         // }.
     },
-    helpers: {
-        getMeta(script) {
+    methods: {
+        getMeta(_info, script) {
 
             return script.find((role) => (
                 typeof role === "object" && role.id === "_meta"

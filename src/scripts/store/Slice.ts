@@ -18,6 +18,7 @@ import type {
     Tail,
 } from "../types/lib";
 import {
+    SelfHelperError,
     SelfReferenceError,
 } from "../errors";
 import {
@@ -33,15 +34,15 @@ export default class Slice<
     },
     TAccessors extends Record<string, AnyFunction> = Record<string, AnyFunction>,
     TEvents extends AnyObject = AnyObject,
-    THelpers extends Record<string, AnyFunction> = {},
-> implements ISlice<TData, TModifiers, TAccessors, TEvents, THelpers> {
+    TMethods extends Record<string, AnyFunction> = {},
+> implements ISlice<TData, TModifiers, TAccessors, TEvents, TMethods> {
 
     static defaultSettings: ISliceSettings = Object.freeze({
         name: "",
         initialState: {},
         modifiers: {},
         accessors: {},
-        helpers: {},
+        methods: {},
         save: true,
         load(state, data) {
             return Object.assign({}, state, data || {});
@@ -57,9 +58,9 @@ export default class Slice<
     public actions: ISliceActions<TModifiers>;
     public references: ISliceReferences<TAccessors>;
     public events: ISliceEvents<TData, TEvents>;
-    public helpers: ISliceHelpers<THelpers>;
+    public helpers: ISliceHelpers<TMethods>;
 
-    constructor(settings: ISliceSettings<TData, TModifiers, TAccessors, TEvents, THelpers>) {
+    constructor(settings: ISliceSettings<TData, TModifiers, TAccessors, TEvents, TMethods>) {
 
         const constructor = this.constructor as typeof Slice;
         const config = Object.assign({}, constructor.defaultSettings, settings);
@@ -68,10 +69,10 @@ export default class Slice<
         this.initialState = config.initialState;
         this.saveSetting = config.save;
         this.loadSetting = config.load;
-        this.helpers =  config.helpers as THelpers;
         this.data = structuredClone(config.initialState);
         this.actions = this.makeActions(config.modifiers as TModifiers);
         this.references = this.makeReferences(config.accessors as TAccessors);
+        this.helpers = this.makeHelpers(config.methods as TMethods);
         this.events = this.makeEvents();
 
     }
@@ -105,6 +106,7 @@ export default class Slice<
             const response = modifier({
                 payload,
                 state: givenState,
+                helpers: { ...this.helpers },
                 trigger(eventName: string, detail: any) {
                     observer?.trigger(`${name}/${eventName}`, detail);
                 },
@@ -137,27 +139,6 @@ export default class Slice<
             Object.entries(accessors).map(([property, accessor]) => [
                 property,
                 this.makeReference(accessor, property),
-                /*
-                (...args: Tail<Parameters<ISliceAccessor>>) => {
-
-                    const references = Object.assign(
-                        {},
-                        this.references,
-                        {
-                            [property]() {
-                                throw new SelfReferenceError(property);
-                            },
-                        }
-                    );
-
-                    return accessor({
-                        references,
-                        state: this.getData(),
-                        helpers: { ...this.helpers },
-                    }, ...args);
-
-                },
-                */
             ])
         ) as ISliceReferences<TAccessors>;
 
@@ -166,16 +147,6 @@ export default class Slice<
     protected makeReference(accessor: ISliceAccessor, property: string) {
 
         return (...args: Tail<Parameters<ISliceAccessor>>) => {
-
-            // const references = Object.assign(
-            //     {},
-            //     this.references,
-            //     {
-            //         [property]() {
-            //             throw new SelfReferenceError(property);
-            //         },
-            //     },
-            // );
 
             const references = {
                 ...this.references,
@@ -206,6 +177,39 @@ export default class Slice<
         } as ISliceEvents<TEvents>;
 
     };
+
+    protected makeHelpers(methods: TMethods) {
+
+        return Object.fromEntries(
+            Object.entries(methods).map(([name, method]) => [
+                name,
+                this.makeHelper(method, name),
+            ])
+        ) as unknown as ISliceHelpers<TMethods>;
+
+    }
+
+    protected makeHelper<TMethod extends AnyFunction>(
+        method: TMethod,
+        name: string,
+    ) {
+
+        return (...args: Tail<Parameters<TMethod>>) => {
+
+            const helpers = {
+                ...this.helpers,
+                [name]() {
+                    throw new SelfHelperError(name);
+                },
+            };
+
+            return method({
+                helpers,
+            }, ...args);
+
+        };
+
+    }
 
     save() {
 

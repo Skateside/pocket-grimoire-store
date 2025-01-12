@@ -3,7 +3,7 @@ import type {
     II18nModifiers,
     II18nAccessors,
     II18nEvents,
-    II18nHelpers,
+    II18nMethods,
 } from "./types";
 import Slice from "../../Slice";
 
@@ -12,7 +12,7 @@ export default new Slice<
     II18nModifiers,
     II18nAccessors,
     II18nEvents,
-    II18nHelpers
+    II18nMethods
 >({
     name: "i18n",
     initialState: {},
@@ -28,7 +28,7 @@ export default new Slice<
 
         }
     },
-    helpers: {},
+    methods: {},
     save: false,
     load(initialState) {
         return {
