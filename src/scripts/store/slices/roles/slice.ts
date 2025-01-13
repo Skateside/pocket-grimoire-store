@@ -15,6 +15,7 @@ import {
 import Slice from "../../Slice";
 import {
     difference,
+    update,
 } from "../../../utilities/objects";
 
 export default new Slice<
@@ -43,10 +44,10 @@ export default new Slice<
         },
     },
     accessors: {
-        getRole({ state }, id: string) {
+        getRole({ state }, id) {
             return state.roles.find((role) => role.id === id);
         },
-        getScriptRole({ helpers, state }, id: string) {
+        getScriptRole({ helpers, state }, id) {
 
             return state.script.find((role) => (
                 role === id
@@ -57,7 +58,7 @@ export default new Slice<
             )) as IRole | string;
 
         },
-        getRoleDiff({ helpers, references }, id: string) {
+        getFullRole({ helpers, references }, id) {
 
             const role = references.getRole(id);
             const homebrew = references.getScriptRole(id);
@@ -66,26 +67,7 @@ export default new Slice<
                 throw new UnrecognisedRoleError(id);
             }
 
-            return difference(
-                role || {},
-                (
-                    homebrew === undefined
-                    ? {}
-                    : helpers.asRoleObject(homebrew)
-                ),
-            );
-
-        },
-        getFullRole({ helpers, references }, id: string) {
-
-            const role = references.getRole(id);
-            const homebrew = references.getScriptRole(id);
-
-            if (!role && !homebrew) {
-                throw new UnrecognisedRoleError(id);
-            }
-
-            const update = helpers.asRoleObject(homebrew || ({ id } as IRole));
+            const update = helpers.asRoleObject(homebrew || id);
             const data = {
                 ...(role || {}),
                 ...update,
@@ -100,6 +82,17 @@ export default new Slice<
             return data;
 
         },
+        getRoleDiff({ references }, id) {
+
+            return difference(
+                references.getRole(id) || { id },
+                references.getFullRole(id),
+            );
+
+        },
+        getDiffedRole({ references }, id, diff) {
+            return update(references.getRole(id) || { id }, diff) as IRole;
+        },
         getSpecialRoles({ helpers, state }) {
             return state.roles.filter((role) => helpers.isSpecialRole(role));
         },
@@ -109,7 +102,7 @@ export default new Slice<
         getScripts({ state }) {
             return state.scripts;
         },
-        getScriptById({ state }, id: string) {
+        getScriptById({ state }, id) {
 
             const script = state.scripts[id];
 

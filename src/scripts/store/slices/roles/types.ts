@@ -99,6 +99,7 @@ export type IRoleAccessors = {
     getScriptRole: (id: string) => string | IRole | void,
     getFullRole: (id: string) => IRole,
     getRoleDiff: (id: string) => IObjectDiff,
+    getDiffedRole: (id: string, diff: IObjectDiff) => IRole,
     getSpecialRoles: () => IRole[],
     getScript: () => IRoleScript,
     getScripts: () => Record<string, IRoleScript>,
