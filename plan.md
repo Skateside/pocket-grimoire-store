@@ -418,18 +418,18 @@ We wouldn't need to save the values of `rolesIds` but we'd need to reference the
 
 ```typescript
 const infoTokens = new Slice({
-    actions: {
-        addRole({ state, payload, trigger }, id: string) {
-            const { index, token } = getTokenOrDie(state, id);
-            token.roleIds = payload;
-            trigger("add-roles", { id: token.id, roleIds: payload });
+    modifiers: {
+        addRole({ state, payload, trigger }) {
+            const { index, token } = getTokenOrDie(state, payload.id);
+            token.roleIds = payload.roleIds;
+            trigger("add-roles", payload);
             state[index] = token;
             return state;
         },
-        clearRoles({ state, payload, trigger }, id: string) {
-            const { index, token } = getTokenOrDie(state, id);
+        clearRoles({ state, payload, trigger }) {
+            const { index, token } = getTokenOrDie(state, payload);
             delete token.roleIds;
-            trigger("clear-roles", { id: token.id });
+            trigger("clear-roles", { id: payload });
             state[index] = token;
             return state;
         },
@@ -447,7 +447,11 @@ const getToken = (state: IInfoData, id: string) => {
 
 };
 
-const getTokenOrDie = (state: IInfoData, id: string) => {
+const getTokenOrDie = (
+    state: IInfoData,
+    id: string,
+    type?: "official" | "custom",
+) => {
 
     const info = getToken(state, id);
 
@@ -455,31 +459,54 @@ const getTokenOrDie = (state: IInfoData, id: string) => {
         throw new UnrecognisedInfoTokenError(id);
     }
 
-    return info;
+    if (type !== undefined) {
 
-};
+        const { isCustom } = info.token;
 
-const getOfficialToken = (state: IInfoData, id: string) => {
+        if (type === "official" && isCustom) {
+            throw new InfoTokenNotOfficial(id);
+        }
 
-    const info = getTokenOrDie(state, id);
+        if (type === "custom" && !isCustom) {
+            throw new InfoTokenNotCustom(id);
+        }
 
-    if (info.token.isCustom) {
-        throw new InfoTokenNotOfficial(id);
     }
 
     return info;
 
 };
 
-const getCustomToken = (state: IInfoData, id: string) => {
+// ---
 
-    const info = getTokenOrDie(state, id);
+const infoTokenComponent = (getSlice) => {
 
-    if (!info.token.isCustom) {
-        throw new InfoTokenNotCustom(id);
-    }
+    const infoTokensSlice = getSlice("info-tokens");
+    const rolesSlice = getSlice("roles");
 
-    return info;
+    infoTokenDialog.on("hide", () => {
+        const infoToken = // ...
+        infoTokensSlice.actions.clearRoles(infoToken.id);
+    });
+
+    const renderInfoToken = (id: string) => {
+
+        const token = infoTokensSlice.references.getById(id);
+
+        if (!token) {
+            return;
+        }
+
+        // ...
+
+        if (token.roleIds) {
+            token.roleIds.forEach((roleId) => {
+                // a WebComponent that takes the role ID and create the token.
+                element.append(create("role-token", { "role": roleId }));
+            });
+        }
+
+    };
 
 };
 ```
