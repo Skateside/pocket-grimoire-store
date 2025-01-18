@@ -13,7 +13,8 @@ export type IInfoToken = {
         | "purple"
         | "red"
     ),
-    type: "official" | "custom",
+    isCustom?: boolean,
+    rolesIds?: string[],
 };
 
 export type IInfoData = IInfoToken[];
@@ -25,7 +26,7 @@ export type IInfoModifiers = {
 };
 
 export type IInfoAccessors = {
-    getByType: () => Record<IInfoToken["type"], IInfoToken[]>,
+    getByType: () => Record<"official" | "custom", IInfoToken[]>,
 };
 
 export type IInfoEvents = {

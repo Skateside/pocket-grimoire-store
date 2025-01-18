@@ -41,7 +41,7 @@ export default function infoTokens(getSlice: IAppGetSlice) {
         .entries(slice.references.getByType())
         .forEach(([type, infoTokens]) => {
 
-            const list = findOrDieCached(`[data-type="${type}"]`, wrapper);
+            const list = findOrDieCached(`#info-token-list-${type}`);
 
             infoTokens.forEach((infoToken) => {
                 list.append(renderTrigger(infoToken));
@@ -65,12 +65,12 @@ export default function infoTokens(getSlice: IAppGetSlice) {
             const {
                 id,
                 text,
-                type,
                 colour,
-            } = htmlTarget.dataset as IInfoToken;
+                isCustom,
+            } = htmlTarget.dataset as any as IInfoToken;
 
             dialogElement.style.setProperty("--colour", `var(--${colour})`);
-            dialogElement.classList.toggle("is-custom", type === "custom");
+            dialogElement.classList.toggle("is-custom", Boolean(isCustom));
             dialogElement.dataset.id = id;
             dialogElement.dataset.text = text;
             dialogText.innerHTML = toHTML(text);
@@ -162,7 +162,7 @@ export default function infoTokens(getSlice: IAppGetSlice) {
 
     on("add", (infoToken) => {
 
-        const list = findOrDieCached("[data-type=\"custom\"]", wrapper);
+        const list = findOrDieCached("#info-token-list-custom");
         list.append(renderTrigger(infoToken));
 
     });

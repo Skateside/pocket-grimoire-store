@@ -29,7 +29,7 @@ export default new Slice<
                 id: randomId("cit-"),
                 text: payload,
                 colour: "grey",
-                type: "custom",
+                isCustom: true,
             };
 
             state.push(infoToken);
@@ -69,11 +69,15 @@ export default new Slice<
     },
     accessors: {
         getByType({ state }) {
-            return Object.groupBy(state, ({ type }) => type);
+            return Object.groupBy(state, ({ isCustom }) => (
+                isCustom
+                ? "custom"
+                : "official"
+            ));
         },
     },
     save(data) {
-        return data.filter(({ type }) => type === "custom");
+        return data.filter(({ isCustom }) => isCustom);
     },
     load(initialState, data = []) {
 
@@ -95,7 +99,7 @@ const getCustomToken = (state: IInfoData, id: IInfoToken["id"]) => {
 
     const token = state[index];
 
-    if (token.type === "official") {
+    if (!token.isCustom) {
         throw new CannotChangeOfficialIntoTokenError(id);
     }
 

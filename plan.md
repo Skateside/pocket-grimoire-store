@@ -392,3 +392,94 @@ This is mainly to keep track of the settings that have been chosen, and/such as 
 Also create the "range slider with output" as a WebComponent.
 
 I've had to hack the `Tabs` class to add a `Tabs.create()` function, which returns the instance, setting up the tabs. This feels wrong because I'm creating an instance just to ignore it. WebComponents might be the better solution as they can create the tabs for me.
+
+We can probably use this to create tokens as well.
+
+## Info Tokens
+
+Info tokens should have space for multiple role tokens as well.
+
+Use cases:
+
+- "This character selecter you" with Cerenovus
+- "These characters are not in play" with Demon bluffs.
+
+```typescript
+type IInfoToken = {
+    id: string,
+    text: string,
+    colour: IInfoTokenColour,
+    isCustom?: boolean,
+    roleIds?: string[],
+};
+```
+
+We wouldn't need to save the values of `rolesIds` but we'd need to reference them and show the token(s) when we show the info token.
+
+```typescript
+const infoTokens = new Slice({
+    actions: {
+        addRole({ state, payload, trigger }, id: string) {
+            const { index, token } = getTokenOrDie(state, id);
+            token.roleIds = payload;
+            trigger("add-roles", { id: token.id, roleIds: payload });
+            state[index] = token;
+            return state;
+        },
+        clearRoles({ state, payload, trigger }, id: string) {
+            const { index, token } = getTokenOrDie(state, id);
+            delete token.roleIds;
+            trigger("clear-roles", { id: token.id });
+            state[index] = token;
+            return state;
+        },
+    },
+});
+
+const getToken = (state: IInfoData, id: string) => {
+
+    const index = state.findIndex((token) => token.id === id);
+
+    return {
+        index,
+        token: state[index],
+    };
+
+};
+
+const getTokenOrDie = (state: IInfoData, id: string) => {
+
+    const info = getToken(state, id);
+
+    if (!info.token) {
+        throw new UnrecognisedInfoTokenError(id);
+    }
+
+    return info;
+
+};
+
+const getOfficialToken = (state: IInfoData, id: string) => {
+
+    const info = getTokenOrDie(state, id);
+
+    if (info.token.isCustom) {
+        throw new InfoTokenNotOfficial(id);
+    }
+
+    return info;
+
+};
+
+const getCustomToken = (state: IInfoData, id: string) => {
+
+    const info = getTokenOrDie(state, id);
+
+    if (!info.token.isCustom) {
+        throw new InfoTokenNotCustom(id);
+    }
+
+    return info;
+
+};
+```
