@@ -502,11 +502,310 @@ const infoTokenComponent = (getSlice) => {
         if (token.roleIds) {
             token.roleIds.forEach((roleId) => {
                 // a WebComponent that takes the role ID and create the token.
-                element.append(create("role-token", { "role": roleId }));
+                // element.append(create("role-token", { "role": roleId }));
+                // ^-- not how WebComponents work :-(
+                element.append(render("token", roleId));
             });
         }
 
     };
 
 };
+```
+
+We need a way to register components so that we can access them from other components, allowing the "info token" component to get a role token.
+
+Components, therefore, need an identifier and a way to pass them data.
+
+```typescript
+/*
+class App = {
+
+    run() {
+
+        const {
+            components,
+            store,
+        } = this;
+
+        store.run();
+
+        const getSlice = ((name: string) => store.getSlice(name)) as IAppGetSlice;
+        components.forEach((component) => component(getSlice));
+
+    }
+
+}
+
+const game = new App();
+*/
+
+class Component {
+    // public readonly name: string;
+    static get name() {
+        return "";
+    }
+    render() {
+    }
+}
+
+class RoleTokenComponent extends Component {
+    static get name() {
+        return "role-token";
+    }
+    render({ data, getSlice, getCompoent }) {
+
+        const slice = getSlice("roles");
+        const role = slice.references.getFullRole(data.id);
+
+        return renderTemplate("#role-token-component", {
+            ".js--role-token--name"(element) {
+                element.textContent = role.name;
+            },
+            // ...
+        });
+
+    }
+}
+
+class InfoTokenComponent extends Component {
+    static get name() {
+        return "info-token";
+    }
+    render({ data, getSlice, getComponent }) {
+
+        const slice = getSlice("info-tokens");
+        const infoToken = slice.getById(data.id);
+
+        return renderTemplate("#info-token-component", {
+            ".js--info-token--text"(element) {
+                element.innerHTML = toHTML(intoToken.text);
+            },
+            ".js--info-token--roles"(element) {
+
+                if (!data.roleIds?.length) {
+                    return;
+                }
+
+                data.roleIds.forEach((id) => {
+                    element.append(getComponent("role-token", { id }));
+                });
+                element.hidden = false;
+
+            },
+        });
+
+    }
+}
+
+class App {
+
+    constructor() {
+        this.components = Object.create(null);
+    }
+
+    registerComponent(component: Component) {
+        this.components[component.name] = component;
+    }
+
+    // The Observer is supposed to allow me to trigger events in a sub-component
+    // that are heard in the component that rendered it.
+    renderComponent(id, data = {}, parentObserver?: IObserver) {
+
+        const Component = this.components[id];
+
+        if (!Component) {
+            throw new UnrecognisedComponentError(id);
+        }
+
+        const observer = new Observer();
+
+        return (new Component()).render({
+            data,
+            getSlice(name: string) {
+                return this.store.getSlice(name);
+            },
+            render(name: string, data = {}) {
+                if (name === id) {
+                    throw new SelfRenderingComponentError(name);
+                }
+                return this.renderComponent(name, data, observer);
+            },
+            on(eventName: string, handler: IObserverHandler) {
+                observer.on(eventName, handler);
+            },
+            off(eventName: string, handler: IObserverHandler) {
+                observer.off(eventName, handler);
+            },
+            trigger(eventName: string, detail: any) {
+                return parentObserver?.trigger(eventName, detail);
+            },
+        });
+
+    }
+
+    // run() {
+
+
+
+    // }
+
+}
+
+class GameComponent extends Component {
+    static get name() {
+        return "game";
+    }
+    render({ getComponent }) {
+
+        getComponent("script-selection");
+        getComponent("role-selection");
+        // etc.
+
+    }
+}
+
+const game = new App();
+game
+    .registerComponent(RoleTokenComponent)
+    .registerComponent(InfoTokenComponent)
+    .registerComponent(GameComponent)
+    ;
+game.getComponent("game");
+```
+
+Would it make more sense to define components like this, similar to the way we define slices?
+
+```typescript
+
+class Component {
+
+    public name: string;
+
+    constructor(name: string, render: IComponentRender) {
+
+        this.name = name;
+        this.render = render;
+
+    }
+
+}
+
+// components/role-token.ts
+// Simple component - give it an ID and it'll render the role token.
+export default new Component("role-token", ({ data, getSlice }) => {
+
+    const slice = getSlice("roles");
+    const role = slice.references.getFullRole(data.id);
+
+    return renderTemplate("#role-token-component", {
+        ".js--role-token--name"(element) {
+            element.textContent = role.name;
+        },
+        // ...
+    });
+
+});
+
+// components/info-token-list.ts
+// Complex component - needs to update itself when the slice data changes.
+export default new Component("info-token-list", ({
+    data,
+    getSlice,
+    render,
+    on,
+}) => {
+
+    const slice = getSlice("info-tokens");
+    const wrapper = findOrDie("#info-token-wrapper");
+
+    // List the info tokens that we currently know about.
+
+    Object.entries(slice.getByType()).forEach(([type, infoTokens]) => {
+        infoTokens.forEach(({ id, text }) => {
+            findOrDieCached(`#info-token-list-${type}`)
+                .append(render("info-token-trigger", { id, text }));
+        });
+    });
+
+    // const dialog = render("dialog");
+    on("trigger-click", ({ id }) => {
+
+        findOrDie("#info-token-dialog").replaceWith(
+            render("info-token-dialog", { id })
+        );
+
+    });
+
+    // Modify the list as the tokens change.
+
+    const { on: onSlice } = slice.events;
+
+    onSlice("add", ({ id, text }) => {
+
+        const list = findOrDieCached("#info-token-list-custom");
+        list.append(render("info-token-trigger", { id, text }));
+
+    });
+
+    onSlice("update", ({ id, text }) => {
+
+        const trigger = findOrDie(`[data-id="${infoToken.id}"]`, wrapper);
+        trigger.replaceWith(render("info-token-trigger", { id, text }));
+
+    });
+
+    onSlice("remove", (id) => {
+        findOrDie(`[data-id="${id}"]`, wrapper).remove();
+    });
+
+});
+
+// components/info-token-trigger.ts
+export default new Component("info-token-trigger", ({
+    data,
+    // getSlice,
+    // render,
+    trigger,
+}) => {
+
+    // const content = renderTemplate("#info-token-template", {
+    return renderTemplate("#info-token-template", {
+        ".js--info-token-trigger"(element) {
+            element.textContent = strip(data.text);
+            element.addEventListener("click", () => {
+                trigger("trigger-click", { id: data.id });
+            });
+        },
+    });
+
+    // content.querySelector(".js--info-token--trigger").addEventListener("click", (e) => {
+    //     e.preventDefault();
+    //     trigger("trigger-click", { id: data.id });
+    // });
+
+    // return content;
+
+});
+
+// components/info-token-dialog.ts
+export default new Component("info-token-dialog", ({
+    data,
+    getSlice,
+    render,
+}) => {
+
+    const dialog = render("dialog");
+
+});
+
+export default new Component("dialog", () => {
+
+    // render dialog
+    // onclickoff = close
+    // onesc = close
+    // return render
+    // Question: how do I close it from another component?
+
+});
 ```
