@@ -610,7 +610,7 @@ class App {
 
     // The Observer is supposed to allow me to trigger events in a sub-component
     // that are heard in the component that rendered it.
-    renderComponent(id, data = {}, parentObserver?: IObserver) {
+    render(id, data = {}, parent: { observer?: IObserver, ids?: string[] } = {}) {
 
         const Component = this.components[id];
 
@@ -619,17 +619,21 @@ class App {
         }
 
         const observer = new Observer();
+        const comp = new Component();
 
-        return (new Component()).render({
+        return comp.render({
             data,
             getSlice(name: string) {
                 return this.store.getSlice(name);
             },
             render(name: string, data = {}) {
-                if (name === id) {
+                // This should allow us to check that the component isn't trying
+                // to render itself at all.
+                const ids = [...(parent.ids || []), id];
+                if (ids.includes(name)) {
                     throw new SelfRenderingComponentError(name);
                 }
-                return this.renderComponent(name, data, observer);
+                return this.render(name, data, { observer, ids });
             },
             on(eventName: string, handler: IObserverHandler) {
                 observer.on(eventName, handler);
@@ -638,17 +642,17 @@ class App {
                 observer.off(eventName, handler);
             },
             trigger(eventName: string, detail: any) {
-                return parentObserver?.trigger(eventName, detail);
+                return parent.observer?.trigger(eventName, detail);
+            },
+            set(key: string, value: any) {
+                comp.set(key, value);
+            },
+            get(key: string) {
+                return comp.get(key);
             },
         });
 
     }
-
-    // run() {
-
-
-
-    // }
 
 }
 
@@ -671,7 +675,7 @@ game
     .registerComponent(InfoTokenComponent)
     .registerComponent(GameComponent)
     ;
-game.getComponent("game");
+game.render("game");
 ```
 
 Would it make more sense to define components like this, similar to the way we define slices?
@@ -681,11 +685,38 @@ Would it make more sense to define components like this, similar to the way we d
 class Component {
 
     public name: string;
+    static data = Object.create(null);
 
     constructor(name: string, render: IComponentRender) {
 
         this.name = name;
         this.render = render;
+
+        const constructor = this.constructor as typeof Component;
+        constructor.data[this.name] = Object.create(null);
+
+    }
+
+    set(key, value) {
+        const constructor = this.constructor as typeof Component;
+        constructor.data[this.name][key] = value;
+    }
+
+    get(key, defaultValue) {
+
+        const constructor = this.constructor as typeof Component;
+        const data = constructor.data[this.name];
+
+        if (Object.hasOwn(data, key)) {
+            return data[key];
+        }
+
+        if (typeof defaultValue === "function") {
+            defaultValue = defaultValue();
+            this.set(key, defaultValue);
+        }
+
+        return defaultValue;
 
     }
 
@@ -769,6 +800,9 @@ export default new Component("info-token-trigger", ({
     trigger,
 }) => {
 
+    // Not sure if I can do this within the renderTemplate() function.
+    // The element itself might not fully exist yet.
+
     // const content = renderTemplate("#info-token-template", {
     return renderTemplate("#info-token-template", {
         ".js--info-token-trigger"(element) {
@@ -793,19 +827,42 @@ export default new Component("info-token-dialog", ({
     data,
     getSlice,
     render,
+    get,
 }) => {
 
-    const dialog = render("dialog");
+    const element = findOrDie("#info-token-dialog");
+    const dialog = get("dialog", () => new Dialog(element));
+    const slice = getSlice("info-tokens");
+    const infoToken = slice.getById(data.id);
+
+    element.style.setProperty("--colour", infoToken.colour);
+    const text = findOrDieCached("#info-token-dialog-text");
+    text.innerHTML = asHTML(infoToken.text);
+
+    renderList(infoToken.roleIds || [], render);
+    dialog.show();
+
+    const { on } = slice.events;
+
+    on("add-role", ({ roleIds }) => renderList(roleIds, render));
+    on("clear-roles", () => renderList([], render));
+
+    // click button to add a role
+    // click button to remove a role
+    // click button to clear roles
+
+    return element;
 
 });
 
-export default new Component("dialog", () => {
+const renderList = (roleIds, render) => {
 
-    // render dialog
-    // onclickoff = close
-    // onesc = close
-    // return render
-    // Question: how do I close it from another component?
+    const list = findOrDieCached("#info-token-dialog-list");
+    list.innerHTML = "";
+    roleIds.forEach((id) => list.append(render("role-token", { id })));
+    list.hidden = roleIds.length > 0;
 
-});
+};
 ```
+
+This style has the benefit of one template being able to render another one, so the code can be reused rather than being recreated.
