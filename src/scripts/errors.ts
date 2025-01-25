@@ -11,6 +11,24 @@ export class PocketGrimoireError extends Error {
     }
 }
 
+// class App
+// Attempting to render a component from itself.
+export class SelfRenderingComponentError extends PocketGrimoireError {
+    constructor(message?: string, options?: ErrorOptions) {
+        super(message, options);
+        this.name = "SelfRenderingComponentError";
+    }
+}
+
+// class App
+// Atempting to render a component that hasn't been registered.
+export class UnrecognisedComponentError extends PocketGrimoireError {
+    constructor(message?: string, options?: ErrorOptions) {
+        super(message, options);
+        this.name = "UnrecognisedComponentError";
+    }
+}
+
 // class Slice
 // Attempting to call a helper from its own method (infinite loop).
 export class SelfHelperError extends PocketGrimoireError {

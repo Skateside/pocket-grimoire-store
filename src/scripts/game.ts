@@ -5,9 +5,9 @@ import Storage from "./store/Storage";
 import i18nSlice from "./store/slices/i18n/slice";
 import infoTokensSlice from "./store/slices/infotokens/slice";
 import rolesSlice from "./store/slices/roles/slice";
-import infoTokensComponent from "./components/infoTokens";
-import scriptsComponent from "./components/scripts";
-import rolesComponent from "./components/roles";
+// import infoTokensComponent from "./components/infoTokens";
+// import scriptsComponent from "./components/scripts";
+// import rolesComponent from "./components/roles";
 
 // Since this is called "game", there can be another one called "sheet" etc.
 
@@ -22,10 +22,11 @@ game
     .addSlice(i18nSlice)
     .addSlice(infoTokensSlice)
     .addSlice(rolesSlice)
-    .addComponent(infoTokensComponent)
-    .addComponent(scriptsComponent)
-    .addComponent(rolesComponent)
-    .run();
+    ;
+    // .addComponent(infoTokensComponent)
+    // .addComponent(scriptsComponent)
+    // .addComponent(rolesComponent)
+    // .run();
 
 // console.log({ game });
 (window as any).game = game;

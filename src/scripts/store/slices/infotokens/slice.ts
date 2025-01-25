@@ -7,6 +7,7 @@ import type {
 } from "./types";
 import {
     CannotChangeOfficialIntoTokenError,
+    UnrecognisedInfoTokenError,
 } from "./errors";
 import Slice from "../../Slice";
 import {
@@ -68,6 +69,16 @@ export default new Slice<
         },
     },
     accessors: {
+        getById({ state }, id) {
+            return state.find((token) => token.id === id);
+        },
+        getByIdOrDie({ references }, id) {
+            const token = references.getById(id);
+            if (!token) {
+                throw new UnrecognisedInfoTokenError(id);
+            }
+            return token;
+        },
         getByType({ state }) {
             return Object.groupBy(state, ({ isCustom }) => (
                 isCustom

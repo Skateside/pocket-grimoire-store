@@ -7,3 +7,11 @@ export class CannotChangeOfficialIntoTokenError extends PocketGrimoireError {
         this.name = "CannotChangeOfficialIntoTokenError";
     }
 }
+
+// Unable to find a matching info token.
+export class UnrecognisedInfoTokenError extends PocketGrimoireError {
+    constructor(message: string, options?: ErrorOptions) {
+        super(message, options);
+        this.name = "UnrecognisedInfoTokenError";
+    }
+}

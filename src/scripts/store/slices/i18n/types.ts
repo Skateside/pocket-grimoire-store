@@ -9,3 +9,5 @@ export type II18nAccessors = {
 export type II18nEvents = {};
 
 export type II18nMethods = {};
+
+export type II18nHelpers = {};

@@ -117,3 +117,5 @@ export type IRoleMethods = {
     getId: (role: IRole | IRoleMeta | string) => string,
     asRoleObject: (role: IRole | string) => RequireOnly<IRole, "id">,
 };
+
+export type IRoleHelpers = {};
