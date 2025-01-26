@@ -29,9 +29,11 @@ export type IComponentRender<TData extends AnyObject = AnyObject> = (
     info: IComponentRenderInfo<TData>,
 ) => DocumentFragment | HTMLElement | void;
 
+export type IComponentGameData = {};
 export type IComponentInfoTokenDialogData = {
     id: string,
 };
+export type IComponentInfoTokenFormData = {};
 export type IComponentInfoTokenListData = {};
 export type IComponentInfoTokenTriggerData = {
     id: string,
@@ -39,10 +41,13 @@ export type IComponentInfoTokenTriggerData = {
 };
 export type IComponentRoleTokenData = {
     id: string,
+    imageIndex?: 0 | 1 | 2,
 };
 
 export type IComponents = {
+    "game": IComponentGameData,
     "info-token-dialog": IComponentInfoTokenDialogData,
+    "info-token-form": IComponentInfoTokenFormData,
     "info-token-list": IComponentInfoTokenListData,
     "info-token-trigger": IComponentInfoTokenTriggerData,
     "role-token": IComponentRoleTokenData,

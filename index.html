@@ -32,7 +32,22 @@
     </head>
     <body>
 
-        <details>
+        <template id="role-token-template">
+            <span class="role-token js--role-token js--role-token--leaves">
+                <span class="role-token__image">
+                    <img src="" alt="" class="role-token__icon js--role-token--image" width="177" height="124" loading="lazy">
+                </span>
+                <svg viewBox="0 0 150 150" class="role-token__text">
+                    <path d="M 13 75 C 13 160, 138 160, 138 75" id="curve" fill="transparent"></path>
+                    <text width="150" x="66.6%" text-anchor="middle" class="role-token__name">
+                        <textPath xlink:href="#curve" style="fill: currentColor;" class="js--character--name"></textPath>
+                    </text>
+                </svg>
+            </span>
+        </template>
+        
+
+        <!-- <details>
             <summary>Script Selection</summary>
 
             <div role="tablist" id="script-tabs">
@@ -86,9 +101,9 @@
                     </label>
                 </li>
             </template>
-        </details>
+        </details> -->
 
-        <details>
+        <!-- <details>
             <summary>Role Selection</summary>
             <div>
 
@@ -132,7 +147,7 @@
                 </template>
 
             </div>
-        </details>
+        </details> -->
 
         <details id="info-token-wrapper">
             <summary>Info Tokens</summary>
@@ -177,6 +192,10 @@
                         <p id="info-token-dialog-text"></p>
                     </div>
                 </dialog>
+
+                <template id="info-token-dialog-list">
+                    <!-- TODO -->
+                </template>
 
             </div>
         </details>

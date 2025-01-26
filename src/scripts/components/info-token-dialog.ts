@@ -17,10 +17,11 @@ export default new Component("info-token-dialog", ({
     getSlice,
     render,
     get,
+    trigger,
 }) => {
 
     const element = findOrDie<HTMLDialogElement>("#info-token-dialog");
-    const dialog = get("dialog", () => new Dialog(element));
+    const dialog = get("dialog", () => Dialog.create(element));
     const slice = getSlice("info-tokens");
     const infoToken = slice.references.getByIdOrDie(data.id);
 
@@ -29,7 +30,41 @@ export default new Component("info-token-dialog", ({
     text.innerHTML = toHTML(infoToken.text);
 
     renderList(infoToken.roleIds || [], render);
-    dialog.show();
+    // dialog.show();
+
+    element.addEventListener("click", ({ target }) => {
+
+        const htmlTarget = (target as HTMLElement)
+            .closest<HTMLButtonElement>("[data-action]");
+
+        if (!htmlTarget) {
+            return;
+        }
+
+        const { id, text } = element.dataset;
+
+        switch (htmlTarget.dataset.action) {
+
+        case "edit":
+            // idInput.value = id!;
+            // textInput.value = text!;
+            // submitButton.textContent = submitButton.dataset.update!;
+            // form.hidden = false;
+            trigger("edit", { id, text });
+            dialog.hide();
+            break;
+
+        case "delete":
+            slice.actions.remove(id!);
+            // form.reset();
+            trigger("delete", { id });
+            dialog.hide();
+            break;
+
+        }
+
+    });
+
 
     // TODO:
 

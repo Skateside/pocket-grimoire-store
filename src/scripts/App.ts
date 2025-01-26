@@ -21,11 +21,13 @@ export default class App {
 
     protected store: IStore;
     protected components: Record<string, IComponent>;
+    protected hasRun: boolean;
 
     constructor({ store }: { store: IStore }) {
 
         this.store = store;
         this.components = Object.create(null);
+        this.hasRun = false;
 
     }
 
@@ -34,13 +36,24 @@ export default class App {
         return this;
     }
 
+    addSlices(slices: ISlice[]) {
+        slices.forEach((slice) => this.addSlice(slice));
+        return this;
+    }
+
     registerComponent(component: IComponent) {
         this.components[component.name] = component;
+        return this;
+    }
+
+    registerComponents(components: IComponent[]) {
+        components.forEach((component) => this.registerComponent(component));
+        return this;
     }
 
     render<K extends keyof IComponents>(
         id: K,
-        data: IComponents[K],
+        data?: IComponents[K],
         parent: {
             observer?: IObserver,
             ids?: string[],
@@ -50,18 +63,23 @@ export default class App {
         const {
             components,
             store,
-            render,
+            hasRun,
         } = this;
+        const render = this.render.bind(this);
         const component = components[id];
 
         if (!component) {
             throw new UnrecognisedComponentError(id);
         }
 
+        if (!hasRun) {
+            this.run();
+        }
+
         const observer = new Observer();
 
         return component.render({
-            data,
+            data: data || {},
             getSlice<K extends keyof IStoreSlices>(name: K) {
                 return store.getSlice(name) as IStoreSlices[K];
             },
@@ -97,18 +115,18 @@ export default class App {
             set(key: string, value: any) {
                 component.set(key, value);
             },
-            get(key: string) {
-                return component.get(key);
+            get(key: string, defaultValue?: any) {
+                return component.get(key, defaultValue);
             },
         });
 
     }
 
-    /**
-     * @deprecated
-     */
     run() {
-        console.warn("we should stop calling App#run()");
+
+        this.store.run();
+        this.hasRun = true;
+
     }
 
 }

@@ -91,7 +91,11 @@ export default new Slice<
         return data.filter(({ isCustom }) => isCustom);
     },
     load(initialState, data = []) {
-
+console.log({ initialState, data, "window.PG.infoTokens": window.PG.infoTokens, "returning": [
+    ...initialState,
+    ...window.PG.infoTokens,
+    ...data,
+] });
         return [
             ...initialState,
             ...window.PG.infoTokens,

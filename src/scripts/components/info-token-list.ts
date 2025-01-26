@@ -5,14 +5,13 @@ import {
 } from "../utilities/dom";
 
 export default new Component("info-token-list", ({
-    // data,
     getSlice,
     render,
     on,
 }) => {
 
     const slice = getSlice("info-tokens");
-    // const wrapper = findOrDie("#info-token-wrapper");
+    const wrapper = findOrDie("#info-token-wrapper");
 
     // List the info tokens that we currently know about.
 
@@ -21,8 +20,8 @@ export default new Component("info-token-list", ({
         .forEach(([type, infoTokens]) => {
 
             infoTokens.forEach(({ id, text }) => {
-                findOrDieCached(`#info-token-list-${type}`)
-                    .append(render("info-token-trigger", { id, text })!);
+                const trigger = render("info-token-trigger", { id, text })!;
+                findOrDieCached(`#info-token-list-${type}`).append(trigger);
             });
 
         });
@@ -34,6 +33,37 @@ export default new Component("info-token-list", ({
         );
 
     });
-    
 
+    // on("edit", ({ id, text }) => {
+    //     // slice.actions.update({ id, text });
+    //     // Update form rendering.
+    // });
+
+    // on("delete", ({ id }) => {
+    //     // slice.actions.remove(id);
+    //     // Reset the form.
+    // });
+
+    // Update the list of info token triggers whenever the slice is updated.
+
+    const { on: onSlice } = slice.events;
+
+    onSlice("add", (infoToken) => {
+
+        const list = findOrDieCached("#info-token-list-custom");
+        list.append(render("info-token-trigger", infoToken)!);
+
+    });
+
+    onSlice("update", (infoToken) => {
+
+        const trigger = findOrDie(`[data-id="${infoToken.id}"]`, wrapper);
+        trigger.replaceWith(render("info-token-trigger", infoToken)!);
+
+    });
+
+    onSlice("remove", (id) => {
+        findOrDie(`[data-id="${id}"]`, wrapper).remove();
+    });
+    
 });

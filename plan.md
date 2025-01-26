@@ -866,3 +866,48 @@ const renderList = (roleIds, render) => {
 ```
 
 This style has the benefit of one template being able to render another one, so the code can be reused rather than being recreated.
+
+## Updating Components
+
+We need a way to tell components to update.
+
+```ts
+const game = new Component("game", ({
+    getComponent,
+    render,
+    on,
+}) => {
+
+    const infoTokenForm = getComponent("info-token-form");
+    infoTokenForm.render();
+
+    on("info-token-edit", ({ id, text }) => {
+        // infoTokenForm.updates.edit({ id, text });
+        infoTokenForm.update("edit", { id, text });
+    });
+
+    on("info-token-delete", () => {
+        // infoTokenForm.updates.reset();
+        infoTokenForm.update("reset");
+    });
+
+});
+
+game.render();
+```
+
+We need to be able to call `update` on a `Component` and have it tell the `render` function that something has changed.
+
+```ts
+class Component {
+
+    constructor(name, render) {
+        this.name = name;
+        this.render = render;
+    }
+
+    update(name: string, data?: AnyObject) {
+    }
+
+}
+```
