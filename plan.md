@@ -898,16 +898,100 @@ game.render();
 
 We need to be able to call `update` on a `Component` and have it tell the `render` function that something has changed.
 
+Although this describes the Info Token form, the same technique would be needed to update the alignment of the role token image, or possibly the shroud and ghost vote states.
+
 ```ts
+class App {
+
+    constructor() {
+        this.components = Object.create(null);
+    }
+
+    registerComponent(component: Component) {
+        this.components[component.name] = component;
+    }
+
+    getComponent(name) {
+
+        const component = this.components[name];
+
+        if (!component) {
+            throw new UnrecognisedComponentError(name);
+        }
+
+        return component;
+
+    }
+
+    // The Observer is supposed to allow me to trigger events in a sub-component
+    // that are heard in the component that rendered it.
+    render(id, data = {}, parent: { observer?: IObserver, ids?: string[] } = {}) {
+
+        const observer = new Observer();
+        const comp = this.getComponent(id);
+
+        return comp.render({
+            data,
+            getSlice(name: string) {
+                return this.store.getSlice(name);
+            },
+            render(name: string, data = {}) {
+                // This should allow us to check that the component isn't trying
+                // to render itself at all.
+                const ids = [...(parent.ids || []), id];
+                if (ids.includes(name)) {
+                    throw new SelfRenderingComponentError(name);
+                }
+                return this.render(name, data, { observer, ids });
+            },
+            on(eventName: string, handler: IObserverHandler) {
+                observer.on(eventName, handler);
+            },
+            off(eventName: string, handler: IObserverHandler) {
+                observer.off(eventName, handler);
+            },
+            trigger(eventName: string, detail: any) {
+                return parent.observer?.trigger(eventName, detail);
+            },
+            set(key: string, value: any) {
+                comp.set(key, value);
+            },
+            get(key: string) {
+                return comp.get(key);
+            },
+            onUpdate(name: string, updater: AnyFunction) {
+            },
+        });
+
+    }
+
+}
+
+
 class Component {
 
     constructor(name, render) {
         this.name = name;
         this.render = render;
+        this.observer = new Observer();
     }
 
     update(name: string, data?: AnyObject) {
+        this.observer.trigger(name, data);
     }
 
 }
+
+new Component("info-token-form", ({
+    onUpdate,
+}) => {
+
+    onUpdate("edit", ({ id, text }) => {
+    });
+
+    onUpdate("reset", () => {
+        form.reset();
+    });
+
+});
 ```
